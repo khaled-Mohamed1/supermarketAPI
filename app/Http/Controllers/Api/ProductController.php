@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
 
-class ProductyController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -54,6 +54,7 @@ class ProductyController extends Controller
                 'product_image' => $new_image,
                 'product_description' => $request->product_description,
                 'product_quantity' => $request->product_quantity,
+                'product_price' => $request->product_price,
             ]);
 
             // Save Image in Storage folder
@@ -131,6 +132,7 @@ class ProductyController extends Controller
             $product->product_name = $request->product_name;
             $product->product_description = $request->product_description;
             $product->product_quantity = $request->product_quantity;
+            $product->product_price = $request->product_price;
 
             if ($request->product_image) {
                 // Public storage

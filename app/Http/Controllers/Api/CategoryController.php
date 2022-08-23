@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
@@ -18,7 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::with('prodcuts')->get();
         return response()->json([
             'status' => true,
             'categories' => $categories
@@ -53,7 +52,6 @@ class CategoryController extends Controller
             $category = Category::create([
                 'category_name' => $request->category_name,
                 'category_image' => $new_image,
-                'category_description' => $request->category_description
             ]);
 
             // Save Image in Storage folder
@@ -129,7 +127,6 @@ class CategoryController extends Controller
             }
 
             $category->category_name = $request->category_name;
-            $category->category_description = $request->category_description;
 
             if ($request->category_image) {
                 // Public storage

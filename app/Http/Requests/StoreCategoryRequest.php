@@ -27,13 +27,11 @@ class StoreCategoryRequest extends FormRequest
             return [
                 'category_name' => 'required|string|max:258',
                 'category_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'category_description' => 'required|string'
             ];
         } else {
             return [
                 'category_name' => 'required|string|max:258',
                 'category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'category_description' => 'required|string'
             ];
         }
     }
@@ -43,13 +41,11 @@ class StoreCategoryRequest extends FormRequest
         if (request()->isMethod('post')) {
             return [
                 'category_name.required' => 'category_name is required!',
-                'category_description.required' => 'category_description is required!',
                 'category_image.required' => 'category_image is required!'
             ];
         } else {
             return [
                 'category_name.required' => 'category_name is required!',
-                'category_description.required' => 'category_description is required!'
             ];
         }
     }

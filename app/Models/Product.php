@@ -15,11 +15,11 @@ class Product extends Model
         'product_description',
         'product_image',
         'product_quantity',
+        'product_price'
     ];
 
     public function CategoryProduct()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
-
 }
