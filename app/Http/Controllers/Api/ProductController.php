@@ -17,11 +17,20 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
-        return response()->json([
-            'status' => true,
-            'products' => $products
-        ], 200);
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            $products = Product::all();
+            return response()->json([
+                'status' => true,
+                'products' => $products
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     }
 
     /**
@@ -42,35 +51,43 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        try {
+        $admin = auth()->user();
 
-            $new_image = time() . $request->product_image->getClientOriginalName();
-            // $imageName =  $new_image . "." . $request->product_image->getClientOriginalExtension();
+        if ($admin->role == '1') {
+            try {
+                $new_image = time() . $request->product_image->getClientOriginalName();
+                // $imageName =  $new_image . "." . $request->product_image->getClientOriginalExtension();
 
-            // Create product
-            $product = Product::create([
-                'category_id' => $request->category_id,
-                'product_name' => $request->product_name,
-                'product_image' => $new_image,
-                'product_description' => $request->product_description,
-                'product_quantity' => $request->product_quantity,
-                'product_price' => $request->product_price,
-            ]);
+                // Create product
+                $product = Product::create([
+                    'category_id' => $request->category_id,
+                    'product_name' => $request->product_name,
+                    'product_image' => $new_image,
+                    'product_description' => $request->product_description,
+                    'product_quantity' => $request->product_quantity,
+                    'product_price' => $request->product_price,
+                ]);
 
-            // Save Image in Storage folder
-            Storage::disk('public')->put('products/' . $new_image, file_get_contents($request->product_image));
+                // Save Image in Storage folder
+                Storage::disk('public')->put('products/' . $new_image, file_get_contents($request->product_image));
 
-            // Return Json Response
+                // Return Json Response
+                return response()->json([
+                    'status' => true,
+                    'message' => "Product Created successfully",
+                    'product' => $product
+                ], 200);
+            } catch (\Exception $e) {
+                // Return Json Response
+                return response()->json([
+                    'message' => "Something went really wrong!"
+                ], 500);
+            }
+        } else {
             return response()->json([
-                'status' => true,
-                'message' => "Product Created successfully",
-                'product' => $product
-            ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
-            return response()->json([
-                'message' => "Something went really wrong!"
-            ], 500);
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
         }
     }
 
@@ -82,20 +99,29 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        // Product Detail
-        $product = Product::find($id);
-        if (!$product) {
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            // Product Detail
+            $product = Product::find($id);
+            if (!$product) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'product Not Found.'
+                ], 404);
+            }
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'product' => $product
+            ], 200);
+        } else {
             return response()->json([
                 'status' => false,
-                'message' => 'product Not Found.'
-            ], 404);
+                'message' => 'Unauthenticated',
+            ], 401);
         }
-
-        // Return Json Response
-        return response()->json([
-            'status' => true,
-            'product' => $product
-        ], 200);
     }
 
     /**
@@ -118,55 +144,64 @@ class ProductController extends Controller
      */
     public function update(StoreProductRequest $request, $id)
     {
-        try {
-            // Find product
-            $product = Product::find($id);
-            if (!$product) {
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            try {
+                // Find product
+                $product = Product::find($id);
+                if (!$product) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'product Not Found.'
+                    ], 404);
+                }
+
+                $product->category_id = $request->category_id;
+                $product->product_name = $request->product_name;
+                $product->product_description = $request->product_description;
+                $product->product_quantity = $request->product_quantity;
+                $product->product_price = $request->product_price;
+
+                if ($request->product_image) {
+                    // Public storage
+                    $storage = Storage::disk('public');
+
+                    // Old iamge delete
+                    if ($storage->exists('products/' . $product->product_image))
+                        $storage->delete('products/' . $product->product_image);
+
+                    // Image name
+                    // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+                    $new_image = time() . $request->product_image->getClientOriginalName();
+
+                    $product->product_image = $new_image;
+
+                    // Image save in public folder
+                    $storage->put($new_image, file_get_contents($request->product_image));
+                }
+
+                // Update product
+                $product->save();
+
+                // Return Json Response
+                return response()->json([
+                    'status' => true,
+                    'message' => "product successfully updated.",
+                    'product' => $product
+                ], 200);
+            } catch (\Exception $e) {
+                // Return Json Response
                 return response()->json([
                     'status' => false,
-                    'message' => 'product Not Found.'
-                ], 404);
+                    'message' => "Something went really wrong!"
+                ], 500);
             }
-
-            $product->category_id = $request->category_id;
-            $product->product_name = $request->product_name;
-            $product->product_description = $request->product_description;
-            $product->product_quantity = $request->product_quantity;
-            $product->product_price = $request->product_price;
-
-            if ($request->product_image) {
-                // Public storage
-                $storage = Storage::disk('public');
-
-                // Old iamge delete
-                if ($storage->exists('products/' . $product->product_image))
-                    $storage->delete('products/' . $product->product_image);
-
-                // Image name
-                // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-                $new_image = time() . $request->product_image->getClientOriginalName();
-
-                $product->product_image = $new_image;
-
-                // Image save in public folder
-                $storage->put($new_image, file_get_contents($request->product_image));
-            }
-
-            // Update product
-            $product->save();
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'message' => "product successfully updated.",
-                'product' => $product
-            ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        } else {
             return response()->json([
                 'status' => false,
-                'message' => "Something went really wrong!"
-            ], 500);
+                'message' => 'Unauthenticated',
+            ], 401);
         }
     }
 
@@ -178,29 +213,38 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        // Detail
-        $product = Product::find($id);
-        if (!$product) {
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            // Detail
+            $product = Product::find($id);
+            if (!$product) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'product Not Found.'
+                ], 404);
+            }
+
+            // Public storage
+            $storage = Storage::disk('public');
+
+            // Iamge delete
+            if ($storage->exists('products/' . $product->product_image))
+                $storage->delete('products/' . $product->product_image);
+
+            // Delete product
+            $product->delete();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "product successfully deleted."
+            ], 200);
+        } else {
             return response()->json([
                 'status' => false,
-                'message' => 'product Not Found.'
-            ], 404);
+                'message' => 'Unauthenticated',
+            ], 401);
         }
-
-        // Public storage
-        $storage = Storage::disk('public');
-
-        // Iamge delete
-        if ($storage->exists('products/' . $product->product_image))
-            $storage->delete('products/' . $product->product_image);
-
-        // Delete product
-        $product->delete();
-
-        // Return Json Response
-        return response()->json([
-            'status' => true,
-            'message' => "product successfully deleted."
-        ], 200);
     }
 }
