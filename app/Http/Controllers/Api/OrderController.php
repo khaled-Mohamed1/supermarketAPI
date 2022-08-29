@@ -20,7 +20,7 @@ class OrderController extends Controller
 
         if ($admin->role == '1') {
             try {
-                $orders = Order::with('items')->get();
+                $orders = Order::with('items')->where('status', '=' , 'انتظار')->get();
                 return response()->json([
                     'status' => true,
                     'orders' => $orders,

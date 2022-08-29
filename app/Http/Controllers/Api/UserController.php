@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreItemRequest;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -161,7 +160,7 @@ class UserController extends Controller
 
         if ($user->role == 0) {
             try {
-                // Find category
+                // Find user
                 $user = User::find($user->id);
                 if (!$user) {
                     return response()->json([
@@ -211,7 +210,7 @@ class UserController extends Controller
                     $storage->put('users/' . $imageName, file_get_contents($request->user_image));
                 }
 
-                // Update category
+                // Update user
                 $user->save();
 
                 // Return Json Response

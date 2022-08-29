@@ -35,10 +35,20 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
 
     //user
     Route::get('/getusers', [AuthController::class, 'getUsers']);
+    Route::put('/updateuser/{id}', [AuthController::class, 'updateUser']);
     Route::delete('/deleteuser/{id}', [AuthController::class, 'deleteUser']);
 
     //order
     Route::apiResource('orders', OrderController::class);
+
+    //statistics
+    Route::get('/statistics',[AuthController::class, 'statistics']);
+
+    //debts
+    Route::get('/usersdebts', [AuthController::class, 'usersDebts']);
+    Route::put('/update_userdebt/{id}', [AuthController::class, 'updateUserDebt']);
+
+
 });
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
