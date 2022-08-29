@@ -178,7 +178,7 @@ class ProductController extends Controller
                     $product->product_image = $new_image;
 
                     // Image save in public folder
-                    $storage->put($new_image, file_get_contents($request->product_image));
+                    $storage->put('products/' . $new_image, file_get_contents($request->product_image));
                 }
 
                 // Update product

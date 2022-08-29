@@ -83,7 +83,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Admin Created Successfully',
+                'message' => 'User Created Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
         } catch (\Throwable $e) {
@@ -137,6 +137,7 @@ class AuthController extends Controller
                     'token' => $user->createToken("API TOKEN")->plainTextToken
                 ], 200);
             }
+
         } catch (\Exception $e) {
             // Return Json Response
             return response()->json([
@@ -182,6 +183,47 @@ class AuthController extends Controller
                     'message' => "Something went really wrong!"
                 ], 500);
             }
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'category Not Found.'
+                ], 404);
+            } elseif ($user->role == '1') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'can not delete admin.'
+                ], 404);
+            }
+
+            // Public storage
+            $storage = Storage::disk('public');
+
+            // Iamge delete
+            if ($storage->exists('users/' . $user->user_image))
+                $storage->delete('users/' . $user->user_image);
+
+            // Delete category
+            $user->delete();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Users successfully deleted."
+            ], 200);
         } else {
             return response()->json([
                 'status' => false,

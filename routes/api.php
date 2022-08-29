@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -23,22 +24,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+    //category
     Route::apiResource('categories', CategoryController::class);
+
+    //product
     Route::apiResource('products', ProductController::class);
+
+    //logout
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //user
     Route::get('/getusers', [AuthController::class, 'getUsers']);
+    Route::delete('/deleteuser/{id}', [AuthController::class, 'deleteUser']);
+
+    //order
+    Route::apiResource('orders', OrderController::class);
 });
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
-    Route::get('/categories', [UserController::class, 'categoriesIndex']);
-    Route::get('/category/{id}', [UserController::class, 'categoryShow']);
-    Route::get('/products', [UserController::class, 'productsIndex']);
-    Route::get('/product/{id}', [UserController::class, 'productShow']);
+    Route::post('/order', [UserController::class, 'storeOrder']);
     Route::post('/logout', [UserController::class, 'userLogout']);
-
+    Route::put('/userupdate', [UserController::class, 'userUpdate']);
 });
 
+Route::get('/categories', [UserController::class, 'categoriesIndex']); //
+Route::get('/category/{id}', [UserController::class, 'categoryShow']); //
+Route::get('/products', [UserController::class, 'productsIndex']); //
+Route::get('/product/{id}', [UserController::class, 'productShow']); //
 
 //admin
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'create']);
+//1|bTVkBDBfGUw6VFpn81YROYlV0Iyjs23HlN4bCUM3

@@ -170,8 +170,8 @@ class CategoryController extends Controller
                     $storage = Storage::disk('public');
 
                     // Old iamge delete
-                    if ($storage->exists($category->category_image))
-                        $storage->delete($category->category_image);
+                    if ($storage->exists('categories/' . $category->category_image))
+                        $storage->delete('categories/' . $category->category_image);
 
                     // Image name
                     // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
@@ -180,7 +180,7 @@ class CategoryController extends Controller
                     $category->category_image = $new_image;
 
                     // Image save in public folder
-                    $storage->put($new_image, file_get_contents($request->category_image));
+                    $storage->put('categories/' . $new_image, file_get_contents($request->category_image));
                 }
 
                 // Update category

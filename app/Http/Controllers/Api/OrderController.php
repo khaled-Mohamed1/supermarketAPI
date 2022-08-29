@@ -15,7 +15,28 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            try {
+                $orders = Order::with('items')->get();
+                return response()->json([
+                    'status' => true,
+                    'orders' => $orders,
+                ], 200);
+            } catch (\Exception $e) {
+                // Return Json Response
+                return response()->json([
+                    'message' => "Something went really wrong!"
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     }
 
     /**
@@ -36,7 +57,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -45,9 +66,31 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show($id)
     {
-        //
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            // category Detail
+            $order = Order::with('items')->find($id);
+            if (!$order) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order Not Found.'
+                ], 404);
+            }
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'order' => $order
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     }
 
     /**
@@ -68,9 +111,46 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order)
+    public function update($id)
     {
-        //
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            try {
+                // Find order
+                $order = Order::find($id);
+                if (!$order) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Order Not Found.'
+                    ], 404);
+                }
+
+                $order->status = 'تم القبول';
+
+
+                // Update category
+                $order->save();
+
+                // Return Json Response
+                return response()->json([
+                    'status' => true,
+                    'message' => "Order successfully updated.",
+                    'order' => $order
+                ], 200);
+            } catch (\Exception $e) {
+                // Return Json Response
+                return response()->json([
+                    'status' => false,
+                    'message' => "Something went really wrong!"
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     }
 
     /**
@@ -79,8 +159,33 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy($id)
     {
-        //
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            // Detail
+            $order = Order::find($id);
+            if (!$order) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'order Not Found.'
+                ], 404);
+            }
+
+            // Delete category
+            $order->delete();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Order successfully deleted."
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     }
 }
