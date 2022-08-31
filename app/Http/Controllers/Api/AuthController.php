@@ -2,12 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-
-
-
-//اخي الكريم محمد شعبان .............
-
-
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
@@ -105,20 +99,12 @@ class AuthController extends Controller
 
             $user = User::where('phone', $request->phone)->first();
 
-            if ($user->role == '1') {
 
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Admin Logged In Successfully',
-                    'token' => $user->createToken("API TOKEN")->plainTextToken
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'User Logged In Successfully',
-                    'token' => $user->createToken("API TOKEN")->plainTextToken
-                ], 200);
-            }
+            return response()->json([
+                'status' => true,
+                'message' => 'User Logged In Successfully',
+                'token' => $user->createToken("API TOKEN")->plainTextToken
+            ], 200);
         } catch (\Exception $e) {
             // Return Json Response
             return response()->json([
@@ -130,250 +116,191 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            auth()->user()->tokens()->delete();
-            return [
-                'status' => true,
-                'Admin' => 'Admin ' . $admin->name,
-                'message' => 'Logged out'
-            ];
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
-        }
+        auth()->user()->tokens()->delete();
+        return [
+            'status' => true,
+            'message' => 'Logged out'
+        ];
     }
 
     public function getUsers(Request $request)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
-                $users = User::where('role', '=', '0')->get();
-                return response()->json([
-                    'status' => true,
-                    'users' => $users,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+        try {
+            $users = User::where('role', '=', '0')->get();
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'users' => $users,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
     public function updateUser(Request $request, $id)
     {
-        $admin = auth()->user();
-
-        if ($admin->role == 1) {
-            try {
-                // Find user
-                $user = User::find($id);
-                if (!$user) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'User Not Found.'
-                    ], 404);
-                }
-
-                $validateUser = Validator::make(
-                    $request->all(),
-                    [
-                        'name' => 'required',
-                        'phone' => 'required|numeric|unique:users',
-                        'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                        'user_address' => 'required'
-                    ]
-                );
-
-                if ($validateUser->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'validation error',
-                        'errors' => $validateUser->errors()
-                    ], 401);
-                }
-
-                $user->name = $request->name;
-                $user->phone = $request->phone;
-                $user->user_address = $request->user_address;
-
-                if ($request->user_image) {
-                    // Public storage
-                    $storage = Storage::disk('public');
-
-                    // Old iamge delete
-                    if ($storage->exists('users/' . $user->user_image))
-                        $storage->delete('users/' . $user->user_image);
-
-                    // Image name
-                    $imageName = Str::random(32) . "." . $request->user_image->getClientOriginalExtension();
-
-                    $user->user_image = $imageName;
-
-                    // Image save in public folder
-                    $storage->put('users/' . $imageName, file_get_contents($request->user_image));
-                }
-
-                // Update user
-                $user->save();
-
-                // Return Json Response
-                return response()->json([
-                    'status' => true,
-                    'message' => "User successfully updated.",
-                    'user' => $user
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
+        try {
+            // Find user
+            $user = User::find($id);
+            if (!$user) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Something went really wrong!"
-                ], 500);
+                    'message' => 'User Not Found.'
+                ], 404);
             }
-        } else {
+
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required',
+                    'phone' => 'required|numeric|unique:users',
+                    'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'user_address' => 'required'
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            $user->name = $request->name;
+            $user->phone = $request->phone;
+            $user->user_address = $request->user_address;
+
+            if ($request->user_image) {
+                // Public storage
+                $storage = Storage::disk('public');
+
+                // Old iamge delete
+                if ($storage->exists('users/' . $user->user_image))
+                    $storage->delete('users/' . $user->user_image);
+
+                // Image name
+                $imageName = Str::random(32) . "." . $request->user_image->getClientOriginalExtension();
+
+                $user->user_image = $imageName;
+
+                // Image save in public folder
+                $storage->put('users/' . $imageName, file_get_contents($request->user_image));
+            }
+
+            // Update user
+            $user->save();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "User successfully updated.",
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
     public function deleteUser($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            $user = User::find($id);
-            if (!$user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'user Not Found.'
-                ], 404);
-            } elseif ($user->role == '1') {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'can not delete admin.'
-                ], 404);
-            }
-
-            // Public storage
-            $storage = Storage::disk('public');
-
-            // Iamge delete
-            if ($storage->exists('users/' . $user->user_image))
-                $storage->delete('users/' . $user->user_image);
-
-            // Delete user
-            $user->delete();
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'message' => "Users successfully deleted."
-            ], 200);
-        } else {
+        $user = User::find($id);
+        if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'user Not Found.'
+            ], 404);
+        } elseif ($user->role == '1') {
+            return response()->json([
+                'status' => false,
+                'message' => 'can not delete admin.'
+            ], 404);
         }
+
+        // Public storage
+        $storage = Storage::disk('public');
+
+        // Iamge delete
+        if ($storage->exists('users/' . $user->user_image))
+            $storage->delete('users/' . $user->user_image);
+
+        // Delete user
+        $user->delete();
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'message' => "Users successfully deleted."
+        ], 200);
     }
 
     public function statistics()
     {
-        $admin = auth()->user();
-
-        if ($admin->role == '1') {
-            try {
-                $orders = Order::count();
-                $sales = Order::sum('total_price');
-                $debts = User::sum('user_debt_amount');
-                $product_qty = Product::where('product_quantity', '0')->get();
-                return response()->json([
-                    'status' => true,
-                    'orders' => $orders,
-                    'sales' => $sales - $debts,
-                    'debts' => $debts,
-                    'product_qty' => $product_qty,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+        try {
+            $orders = Order::count();
+            $sales = Order::sum('total_price');
+            $debts = User::sum('user_debt_amount');
+            $product_qty = Product::where('product_quantity', '0')->get();
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'orders' => $orders,
+                'sales' => $sales - $debts,
+                'debts' => $debts,
+                'product_qty' => $product_qty,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
     public function usersDebts()
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
-                $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->get();
-                return response()->json([
-                    'status' => true,
-                    'users' => $users,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+        try {
+            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->get();
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'users' => $users,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
     public function updateUserDebt(Request $request, $id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
-                $user = User::find($id);
+        try {
+            $user = User::find($id);
 
-                $user->user_debt_amount = $request->debt;
-                $user->save();
+            $user->user_debt_amount = $request->debt;
+            $user->save();
 
-                return response()->json([
-                    'status' => true,
-                    'message' => "UserDebt successfully updated.",
-                    'users' => $user,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'message' => "UserDebt successfully updated.",
+                'users' => $user,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 }

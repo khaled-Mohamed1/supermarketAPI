@@ -18,26 +18,17 @@ class CategoryController extends Controller
     public function index()
     {
 
-        $admin = auth()->user();
-
-        if ($admin->role == '1') {
-            try {
-                $categories = Category::with('prodcuts')->get();
-                return response()->json([
-                    'status' => true,
-                    'categories' => $categories,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+        try {
+            $categories = Category::with('prodcuts')->get();
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'categories' => $categories,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
@@ -59,40 +50,32 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
+        try {
 
-                $new_image = time() . $request->category_image->getClientOriginalName();
-                // $imageName =  $new_image . "." . $request->category_image->getClientOriginalExtension();
+            $new_image = time() . $request->category_image->getClientOriginalName();
+            // $imageName =  $new_image . "." . $request->category_image->getClientOriginalExtension();
 
-                // Create Category
-                $category = Category::create([
-                    'category_name' => $request->category_name,
-                    'category_image' => $new_image,
-                ]);
+            // Create Category
+            $category = Category::create([
+                'category_name' => $request->category_name,
+                'category_image' => $new_image,
+            ]);
 
-                // Save Image in Storage folder
-                Storage::disk('public')->put('categories/' . $new_image, file_get_contents($request->category_image));
+            // Save Image in Storage folder
+            Storage::disk('public')->put('categories/' . $new_image, file_get_contents($request->category_image));
 
-                // Return Json Response
-                return response()->json([
-                    'status' => true,
-                    'message' => "Category Created successfully",
-                    'category' => $category
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+            // Return Json Response
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'message' => "Category Created successfully",
+                'category' => $category
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
@@ -104,29 +87,21 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            // category Detail
-            $category = Category::find($id);
-            if (!$category) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Category Not Found.'
-                ], 404);
-            }
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'category' => $category
-            ], 200);
-        } else {
+        // category Detail
+        $category = Category::find($id);
+        if (!$category) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'Category Not Found.'
+            ], 404);
         }
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'category' => $category
+        ], 200);
     }
 
     /**
@@ -150,60 +125,51 @@ class CategoryController extends Controller
     public function update(StoreCategoryRequest $request, $id)
     {
 
-        $admin = auth()->user();
-
-        if ($admin->role == '1') {
-            try {
-                // Find category
-                $category = Category::find($id);
-                if (!$category) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Category Not Found.'
-                    ], 404);
-                }
-
-                $category->category_name = $request->category_name;
-
-                if ($request->category_image) {
-                    // Public storage
-                    $storage = Storage::disk('public');
-
-                    // Old iamge delete
-                    if ($storage->exists('categories/' . $category->category_image))
-                        $storage->delete('categories/' . $category->category_image);
-
-                    // Image name
-                    // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-                    $new_image = time() . $request->category_image->getClientOriginalName();
-
-                    $category->category_image = $new_image;
-
-                    // Image save in public folder
-                    $storage->put('categories/' . $new_image, file_get_contents($request->category_image));
-                }
-
-                // Update category
-                $category->save();
-
-                // Return Json Response
-                return response()->json([
-                    'status' => true,
-                    'message' => "Category successfully updated.",
-                    'category' => $category
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
+        try {
+            // Find category
+            $category = Category::find($id);
+            if (!$category) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Something went really wrong!"
-                ], 500);
+                    'message' => 'Category Not Found.'
+                ], 404);
             }
-        } else {
+
+            $category->category_name = $request->category_name;
+
+            if ($request->category_image) {
+                // Public storage
+                $storage = Storage::disk('public');
+
+                // Old iamge delete
+                if ($storage->exists('categories/' . $category->category_image))
+                    $storage->delete('categories/' . $category->category_image);
+
+                // Image name
+                // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+                $new_image = time() . $request->category_image->getClientOriginalName();
+
+                $category->category_image = $new_image;
+
+                // Image save in public folder
+                $storage->put('categories/' . $new_image, file_get_contents($request->category_image));
+            }
+
+            // Update category
+            $category->save();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Category successfully updated.",
+                'category' => $category
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
@@ -215,38 +181,30 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            // Detail
-            $category = Category::find($id);
-            if (!$category) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'category Not Found.'
-                ], 404);
-            }
-
-            // Public storage
-            $storage = Storage::disk('public');
-
-            // Iamge delete
-            if ($storage->exists('categories/' . $category->category_image))
-                $storage->delete('categories/' . $category->category_image);
-
-            // Delete category
-            $category->delete();
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'message' => "Category successfully deleted."
-            ], 200);
-        } else {
+        // Detail
+        $category = Category::find($id);
+        if (!$category) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'category Not Found.'
+            ], 404);
         }
+
+        // Public storage
+        $storage = Storage::disk('public');
+
+        // Iamge delete
+        if ($storage->exists('categories/' . $category->category_image))
+            $storage->delete('categories/' . $category->category_image);
+
+        // Delete category
+        $category->delete();
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'message' => "Category successfully deleted."
+        ], 200);
     }
 }

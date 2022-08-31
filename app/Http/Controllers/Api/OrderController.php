@@ -17,26 +17,18 @@ class OrderController extends Controller
     public function index()
     {
 
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
-                $orders = Order::with('items')->where('status', '=', 'انتظار')->get();
-                return response()->json([
-                    'status' => true,
-                    'orders' => $orders,
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
-                return response()->json([
-                    'message' => "Something went really wrong!"
-                ], 500);
-            }
-        } else {
+        try {
+            $orders = Order::with('items')->where('status', '=', 'انتظار')->get();
             return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'status' => true,
+                'orders' => $orders,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
@@ -68,29 +60,20 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            // category Detail
-            $order = Order::with('items')->find($id);
-            if (!$order) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Order Not Found.'
-                ], 404);
-            }
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'order' => $order
-            ], 200);
-        } else {
+        $order = Order::with('items')->find($id);
+        if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'Order Not Found.'
+            ], 404);
         }
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'order' => $order
+        ], 200);
     }
 
     /**
@@ -113,43 +96,34 @@ class OrderController extends Controller
      */
     public function update($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            try {
-                // Find order
-                $order = Order::find($id);
-                if (!$order) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Order Not Found.'
-                    ], 404);
-                }
-
-                $order->status = 'تم القبول';
-
-
-                // Update category
-                $order->save();
-
-                // Return Json Response
-                return response()->json([
-                    'status' => true,
-                    'message' => "Order successfully updated.",
-                    'order' => $order
-                ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
+        try {
+            // Find order
+            $order = Order::find($id);
+            if (!$order) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Something went really wrong!"
-                ], 500);
+                    'message' => 'Order Not Found.'
+                ], 404);
             }
-        } else {
+
+            $order->status = 'تم القبول';
+
+
+            $order->save();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Order successfully updated.",
+                'order' => $order
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 
@@ -161,65 +135,48 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            // Detail
-            $order = Order::find($id);
-            if (!$order) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'order Not Found.'
-                ], 404);
-            }
-
-            // Delete category
-            $order->delete();
-
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'message' => "Order successfully deleted."
-            ], 200);
-        } else {
+        // Detail
+        $order = Order::find($id);
+        if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'order Not Found.'
+            ], 404);
         }
+
+        // Delete category
+        $order->delete();
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'message' => "Order successfully deleted."
+        ], 200);
     }
 
     public function putDebt($id)
     {
-        $admin = auth()->user();
 
-        if ($admin->role == '1') {
-            // category Detail
-            $order = Order::select('user_id', 'total_price')->find($id);
-            if (!$order) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Order Not Found.'
-                ], 404);
-            }
-
-            $user = User::find($order->user_id);
-
-            $user->user_debt_amount = $user->user_debt_amount + $order->total_price;
-
-            // Update debt
-            $user->save();
-            // Return Json Response
-            return response()->json([
-                'status' => true,
-                'message' => "Debt send to user.",
-                'order' => $order->total_price,
-            ], 200);
-        } else {
+        $order = Order::select('user_id', 'total_price')->find($id);
+        if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => 'Order Not Found.'
+            ], 404);
         }
+
+        $user = User::find($order->user_id);
+
+        $user->user_debt_amount = $user->user_debt_amount + $order->total_price;
+
+        // Update debt
+        $user->save();
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'message' => "Debt send to user.",
+            'order' => $order->total_price,
+        ], 200);
     }
 }
