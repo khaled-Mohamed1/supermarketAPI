@@ -55,32 +55,6 @@ class AuthController extends Controller
 
                 // Save Image in Storage folder
                 Storage::disk('public')->put('users/' . $imageName, file_get_contents($request->user_image));
-            } else {
-                $validateUser = Validator::make(
-                    $request->all(),
-                    [
-                        'name' => 'required',
-                        'phone' => 'required|numeric|unique:users',
-                        'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                        'password' => 'required'
-                    ]
-                );
-
-                if ($validateUser->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'validation error',
-                        'errors' => $validateUser->errors()
-                    ], 401);
-                }
-
-                //image
-
-                $user = User::create([
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'password' => Hash::make($request->password),
-                ]);
             }
 
             return response()->json([
@@ -324,7 +298,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' => true,
                     'orders' => $orders,
-                    'sales' => $sales,
+                    'sales' => $sales - $debts,
                     'debts' => $debts,
                     'product_qty' => $product_qty,
                 ], 200);

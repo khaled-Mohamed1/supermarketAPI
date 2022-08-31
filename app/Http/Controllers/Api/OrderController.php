@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -20,7 +21,7 @@ class OrderController extends Controller
 
         if ($admin->role == '1') {
             try {
-                $orders = Order::with('items')->where('status', '=' , 'انتظار')->get();
+                $orders = Order::with('items')->where('status', '=', 'انتظار')->get();
                 return response()->json([
                     'status' => true,
                     'orders' => $orders,
@@ -57,7 +58,6 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
     }
 
     /**
@@ -180,6 +180,40 @@ class OrderController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => "Order successfully deleted."
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+    }
+
+    public function putDebt($id)
+    {
+        $admin = auth()->user();
+
+        if ($admin->role == '1') {
+            // category Detail
+            $order = Order::select('user_id', 'total_price')->find($id);
+            if (!$order) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order Not Found.'
+                ], 404);
+            }
+
+            $user = User::find($order->user_id);
+
+            $user->user_debt_amount = $user->user_debt_amount + $order->total_price;
+
+            // Update debt
+            $user->save();
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Debt send to user.",
+                'order' => $order->total_price,
             ], 200);
         } else {
             return response()->json([

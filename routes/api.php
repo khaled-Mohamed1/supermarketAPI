@@ -40,15 +40,14 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
 
     //order
     Route::apiResource('orders', OrderController::class);
+    Route::get('/putdebt/{id}', [OrderController::class, 'putDebt']);
 
     //statistics
-    Route::get('/statistics',[AuthController::class, 'statistics']);
+    Route::get('/statistics', [AuthController::class, 'statistics']);
 
     //debts
     Route::get('/usersdebts', [AuthController::class, 'usersDebts']);
     Route::put('/update_userdebt/{id}', [AuthController::class, 'updateUserDebt']);
-
-
 });
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
