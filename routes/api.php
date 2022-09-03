@@ -52,6 +52,7 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/order', [UserController::class, 'storeOrder']);
+    Route::get('/getorder', [UserController::class, 'getOrder']);
     Route::post('/logout', [UserController::class, 'userLogout']);
     Route::put('/userupdate', [UserController::class, 'userUpdate']);
 });

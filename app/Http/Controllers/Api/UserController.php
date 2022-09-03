@@ -108,8 +108,7 @@ class UserController extends Controller
                         'product_quantity' => $value['product_quantity'],
                         'price' => $product->product_price * $value['product_quantity'],
                     ]);
-                   Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);;
-
+                    Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);;
                 }
 
                 // Return Json Response
@@ -231,6 +230,24 @@ class UserController extends Controller
                 'status' => false,
                 'message' => 'Unauthenticated',
             ], 401);
+        }
+    }
+
+    public function getOrder()
+    {
+        $user = auth()->user();
+
+        try {
+            $orders = Order::with('items')->where('user_id',  $user->id)->get();
+            return response()->json([
+                'status' => true,
+                'orders' => $orders,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
         }
     }
 }
