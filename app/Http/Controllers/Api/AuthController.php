@@ -41,7 +41,6 @@ class AuthController extends Controller
                 }
 
                 //image
-                // $new_image = time() . $request->user_image->getClientOriginalName();
                 $imageName = Str::random(32) . "." . $request->user_image->getClientOriginalExtension();
 
 
@@ -49,7 +48,7 @@ class AuthController extends Controller
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'user_address' => $request->user_address,
-                    'user_image' => $imageName,
+                    'user_image' => 'http://shaker.tojar-gaza.com/storage/app/public/users/' . $imageName,
                     'password' => Hash::make($request->password),
                 ]);
 

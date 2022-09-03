@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -53,17 +54,16 @@ class CategoryController extends Controller
 
         try {
 
-            $new_image = time() . $request->category_image->getClientOriginalName();
-            // $imageName =  $new_image . "." . $request->category_image->getClientOriginalExtension();
+            $imageName = Str::random(32) . "." . $request->category_image->getClientOriginalExtension();
 
             // Create Category
             $category = Category::create([
                 'category_name' => $request->category_name,
-                'category_image' => $new_image,
+                'category_image' => 'http://shaker.tojar-gaza.com/storage/app/public/categories/' . $imageName,
             ]);
 
             // Save Image in Storage folder
-            Storage::disk('public')->put('categories/' . $new_image, file_get_contents($request->category_image));
+            Storage::disk('public')->put('categories/' . $imageName, file_get_contents($request->category_image));
 
             // Return Json Response
             return response()->json([

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -45,21 +46,20 @@ class ProductController extends Controller
     {
 
         try {
-            $new_image = time() . $request->product_image->getClientOriginalName();
-            // $imageName =  $new_image . "." . $request->product_image->getClientOriginalExtension();
+            $imageName = Str::random(32) . "." . $request->product_image->getClientOriginalExtension();
 
             // Create product
             $product = Product::create([
                 'category_id' => $request->category_id,
                 'product_name' => $request->product_name,
-                'product_image' => $new_image,
+                'product_image' => 'http://shaker.tojar-gaza.com/storage/app/public/products/' . $imageName,
                 'product_description' => $request->product_description,
                 'product_quantity' => $request->product_quantity,
                 'product_price' => $request->product_price,
             ]);
 
             // Save Image in Storage folder
-            Storage::disk('public')->put('products/' . $new_image, file_get_contents($request->product_image));
+            Storage::disk('public')->put('products/' . $imageName, file_get_contents($request->product_image));
 
             // Return Json Response
             return response()->json([
