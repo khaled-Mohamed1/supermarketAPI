@@ -33,6 +33,23 @@ class CategoryController extends Controller
         }
     }
 
+    public function categoriesNames()
+    {
+
+        try {
+            $categories = Category::pluck('category_name');
+            return response()->json([
+                'status' => true,
+                'categories' => $categories,
+            ], 200);
+        } catch (\Exception $e) {
+            // Return Json Response
+            return response()->json([
+                'message' => "Something went really wrong!"
+            ], 500);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *

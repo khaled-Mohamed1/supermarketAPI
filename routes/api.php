@@ -27,6 +27,7 @@ Route::prefix('admin')->group(function () {
     //category
     Route::apiResource('categories', CategoryController::class);
     Route::post('/categoryupdate', [CategoryController::class, 'categoryUpdate']);
+    Route::get('/categoriesnames', [CategoryController::class, 'categoriesNames']);
     Route::post('/categorydelete', [CategoryController::class, 'categoryDelete']);
 
     //product
