@@ -141,11 +141,11 @@ class AuthController extends Controller
         }
     }
 
-    public function updateUser(Request $request, $id)
+    public function updateUser(Request $request)
     {
         try {
             // Find user
-            $user = User::find($id);
+            $user = User::find($request->user_id);
             if (!$user) {
                 return response()->json([
                     'status' => false,
@@ -186,7 +186,7 @@ class AuthController extends Controller
                 // Image name
                 $imageName = Str::random(32) . "." . $request->user_image->getClientOriginalExtension();
 
-                $user->user_image = $imageName;
+                $user->user_image = 'http://node.tojar-gaza.com/storage/app/public/users/' . $imageName;
 
                 // Image save in public folder
                 $storage->put('users/' . $imageName, file_get_contents($request->user_image));
@@ -210,10 +210,10 @@ class AuthController extends Controller
         }
     }
 
-    public function deleteUser($id)
+    public function deleteUser(Request $request)
     {
 
-        $user = User::find($id);
+        $user = User::find($request->user_id);
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -282,11 +282,11 @@ class AuthController extends Controller
         }
     }
 
-    public function updateUserDebt(Request $request, $id)
+    public function updateUserDebt(Request $request)
     {
 
         try {
-            $user = User::find($id);
+            $user = User::find($request->user_id);
 
             $user->user_debt_amount = $request->debt;
             $user->save();

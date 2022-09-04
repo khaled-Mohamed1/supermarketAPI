@@ -81,11 +81,11 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
 
         // Product Detail
-        $product = Product::find($id);
+        $product = Product::find($request->product_id);
         if (!$product) {
             return response()->json([
                 'status' => false,
@@ -118,12 +118,12 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreProductRequest $request, $id)
+    public function productUpdate(StoreProductRequest $request)
     {
 
         try {
             // Find product
-            $product = Product::find($id);
+            $product = Product::find($request->product_id);
             if (!$product) {
                 return response()->json([
                     'status' => false,
@@ -146,13 +146,12 @@ class ProductController extends Controller
                     $storage->delete('products/' . $product->product_image);
 
                 // Image name
-                // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-                $new_image = time() . $request->product_image->getClientOriginalName();
+                $imageName = Str::random(32) . "." . $request->product_image->getClientOriginalExtension();
 
-                $product->product_image = $new_image;
+                $product->product_image = 'http://node.tojar-gaza.com/storage/app/public/products/' . $imageName;
 
                 // Image save in public folder
-                $storage->put('products/' . $new_image, file_get_contents($request->product_image));
+                $storage->put('products/' . $imageName, file_get_contents($request->product_image));
             }
 
             // Update product
@@ -179,11 +178,11 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function productDelete(Request $request)
     {
 
         // Detail
-        $product = Product::find($id);
+        $product = Product::find($request->product_id);
         if (!$product) {
             return response()->json([
                 'status' => false,

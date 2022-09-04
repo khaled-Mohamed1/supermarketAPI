@@ -122,12 +122,12 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreCategoryRequest $request, $id)
+    public function categoryupdate(StoreCategoryRequest $request)
     {
 
         try {
             // Find category
-            $category = Category::find($id);
+            $category = Category::find($request->category_id);
             if (!$category) {
                 return response()->json([
                     'status' => false,
@@ -146,13 +146,12 @@ class CategoryController extends Controller
                     $storage->delete('categories/' . $category->category_image);
 
                 // Image name
-                // $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-                $new_image = time() . $request->category_image->getClientOriginalName();
+                $imageName = Str::random(32) . "." . $request->category_image->getClientOriginalExtension();
 
-                $category->category_image = $new_image;
+                $category->category_image = 'http://node.tojar-gaza.com/storage/app/public/categories/' . $imageName;
 
                 // Image save in public folder
-                $storage->put('categories/' . $new_image, file_get_contents($request->category_image));
+                $storage->put('categories/' . $imageName, file_get_contents($request->category_image));
             }
 
             // Update category
@@ -162,7 +161,7 @@ class CategoryController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => "Category successfully updated.",
-                'category' => $category
+                'categories' => $category,
             ], 200);
         } catch (\Exception $e) {
             // Return Json Response
@@ -179,11 +178,11 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function categoryDelete(Request $request)
     {
 
         // Detail
-        $category = Category::find($id);
+        $category = Category::find($request->category_id);
         if (!$category) {
             return response()->json([
                 'status' => false,

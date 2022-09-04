@@ -26,41 +26,48 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('admin')->group(function () {
     //category
     Route::apiResource('categories', CategoryController::class);
+    Route::post('/categoryupdate', [CategoryController::class, 'categoryUpdate']);
+    Route::post('/categorydelete', [CategoryController::class, 'categoryDelete']);
 
     //product
     Route::apiResource('products', ProductController::class);
+    Route::post('/productupdate', [ProductController::class, 'productUpdate']);
+    Route::post('/productdelete', [ProductController::class, 'productDelete']);
 
     //logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
     //user
     Route::get('/getusers', [AuthController::class, 'getUsers']);
-    Route::put('/updateuser/{id}', [AuthController::class, 'updateUser']);
-    Route::delete('/deleteuser/{id}', [AuthController::class, 'deleteUser']);
+    Route::post('/updateuser', [AuthController::class, 'updateUser']);
+    Route::post('/deleteuser', [AuthController::class, 'deleteUser']);
 
     //order
     Route::apiResource('orders', OrderController::class);
-    Route::get('/putdebt/{id}', [OrderController::class, 'putDebt']);
+    Route::post('/ordershow', [OrderController::class, 'orderShow']);
+    Route::post('/orderupdate', [OrderController::class, 'orderUpdate']);
+    Route::post('/orderdelete', [OrderController::class, 'orderDelete']);
+    Route::post('/putdebt', [OrderController::class, 'putDebt']);
 
     //statistics
     Route::get('/statistics', [AuthController::class, 'statistics']);
 
     //debts
     Route::get('/usersdebts', [AuthController::class, 'usersDebts']);
-    Route::put('/update_userdebt/{id}', [AuthController::class, 'updateUserDebt']);
+    Route::post('/update_userdebt', [AuthController::class, 'updateUserDebt']);
 });
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/order', [UserController::class, 'storeOrder']);
     Route::get('/getorder', [UserController::class, 'getOrder']);
     Route::post('/logout', [UserController::class, 'userLogout']);
-    Route::put('/userupdate', [UserController::class, 'userUpdate']);
+    Route::post('/userupdate', [UserController::class, 'userUpdate']);
 });
 
 Route::get('/categories', [UserController::class, 'categoriesIndex']); //
-Route::get('/category/{id}', [UserController::class, 'categoryShow']); //
+Route::post('/category', [UserController::class, 'categoryShow']); //
 Route::get('/products', [UserController::class, 'productsIndex']); //
-Route::get('/product/{id}', [UserController::class, 'productShow']); //
+Route::post('/product', [UserController::class, 'productShow']); //
 
 //admin
 Route::post('/auth/login', [AuthController::class, 'login']);

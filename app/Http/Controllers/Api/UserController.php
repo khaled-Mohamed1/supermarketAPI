@@ -26,10 +26,10 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function categoryShow($id)
+    public function categoryShow(Request $request)
     {
         // category Detail
-        $category = Category::with('prodcuts')->find($id);
+        $category = Category::with('prodcuts')->find($request->category_id);
         if (!$category) {
             return response()->json([
                 'status' => false,
@@ -54,11 +54,11 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function productShow($id)
+    public function productShow(Request $request)
     {
 
         // Product Detail
-        $product = Product::find($id);
+        $product = Product::find($request->product_id);
         if (!$product) {
             return response()->json([
                 'status' => false,

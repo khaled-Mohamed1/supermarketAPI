@@ -58,10 +58,10 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function orderShow(Request $request)
     {
 
-        $order = Order::with('items')->find($id);
+        $order = Order::with('items')->find($request->order_id);
         if (!$order) {
             return response()->json([
                 'status' => false,
@@ -94,12 +94,12 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function update($id)
+    public function orderUpdate(Request $request)
     {
 
         try {
             // Find order
-            $order = Order::find($id);
+            $order = Order::find($request->order_id);
             if (!$order) {
                 return response()->json([
                     'status' => false,
@@ -133,11 +133,11 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function orderDelete(Request $request)
     {
 
         // Detail
-        $order = Order::find($id);
+        $order = Order::find($request->order_id);
         if (!$order) {
             return response()->json([
                 'status' => false,
@@ -155,10 +155,10 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function putDebt($id)
+    public function putDebt(Request $request)
     {
 
-        $order = Order::select('user_id', 'total_price')->find($id);
+        $order = Order::select('user_id', 'total_price')->find($request->order_id);
         if (!$order) {
             return response()->json([
                 'status' => false,
