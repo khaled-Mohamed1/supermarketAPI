@@ -59,7 +59,7 @@ class CategoryController extends Controller
             // Create Category
             $category = Category::create([
                 'category_name' => $request->category_name,
-                'category_image' => 'http://shaker.tojar-gaza.com/storage/app/public/categories/' . $imageName,
+                'category_image' => 'http://node.tojar-gaza.com/storage/app/public/categories/' . $imageName,
             ]);
 
             // Save Image in Storage folder

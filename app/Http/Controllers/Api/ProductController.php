@@ -52,7 +52,7 @@ class ProductController extends Controller
             $product = Product::create([
                 'category_id' => $request->category_id,
                 'product_name' => $request->product_name,
-                'product_image' => 'http://shaker.tojar-gaza.com/storage/app/public/products/' . $imageName,
+                'product_image' => 'http://node.tojar-gaza.com/storage/app/public/products/' . $imageName,
                 'product_description' => $request->product_description,
                 'product_quantity' => $request->product_quantity,
                 'product_price' => $request->product_price,

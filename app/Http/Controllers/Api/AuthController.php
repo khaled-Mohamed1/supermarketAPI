@@ -48,7 +48,7 @@ class AuthController extends Controller
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'user_address' => $request->user_address,
-                    'user_image' => 'http://shaker.tojar-gaza.com/storage/app/public/users/' . $imageName,
+                    'user_image' => 'http://node.tojar-gaza.com/storage/app/public/users/' . $imageName,
                     'password' => Hash::make($request->password),
                 ]);
 
