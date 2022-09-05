@@ -18,6 +18,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        //test
 
         try {
             $categories = Category::with('prodcuts')->get();
