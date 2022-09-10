@@ -131,6 +131,7 @@ class ProductController extends Controller
                 ], 404);
             }
 
+            $product->category_id = $request->category_id;
             $product->product_name = $request->product_name;
             $product->product_description = $request->product_description;
             $product->product_quantity = $request->product_quantity;

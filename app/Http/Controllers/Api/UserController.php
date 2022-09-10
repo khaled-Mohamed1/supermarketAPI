@@ -136,28 +136,27 @@ class UserController extends Controller
     //log out
     public function userLogout(Request $request)
     {
-        $user = auth()->user();
-
-        if ($user->role == 0) {
-            auth()->user()->tokens()->delete();
+        try {
+//            $request->user()->currentAccessToken()->delete();
+            $request->user()->tokens()->delete();
             return [
                 'status' => true,
-                'User' => 'User ' . $user->name,
-                'message' => 'Logged out'
+                'message' => 'User Logged out'
             ];
-        } else {
+        }catch (\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
+                'message' => $e->getMessage()
+            ], 500);
         }
+
+
     }
 
     public function userUpdate(Request $request)
     {
         $user = auth()->user();
 
-        if ($user->role == 0) {
             try {
                 // Find user
                 $user = User::find($user->id);
@@ -218,19 +217,13 @@ class UserController extends Controller
                     'message' => "User successfully updated.",
                     'user' => $user
                 ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
+            }catch (\Exception $e){
                 return response()->json([
                     'status' => false,
-                    'message' => "Something went really wrong!"
+                    'message' => $e->getMessage()
                 ], 500);
             }
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
-        }
+
     }
 
     public function getOrder()
