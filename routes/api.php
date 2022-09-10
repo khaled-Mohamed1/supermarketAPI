@@ -60,10 +60,10 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/order', [UserController::class, 'storeOrder']);
-    Route::get('/getorder', [UserController::class, 'getOrder']);
     Route::post('/logout', [UserController::class, 'userLogout']);
-    Route::post('/userupdate', [UserController::class, 'userUpdate']);
 });
+Route::post('user/userupdate', [UserController::class, 'userUpdate']);
+Route::post('user/getorder', [UserController::class, 'getOrder']);
 
 Route::get('/categories', [UserController::class, 'categoriesIndex']); //
 Route::post('/category', [UserController::class, 'categoryShow']); //

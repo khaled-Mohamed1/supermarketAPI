@@ -75,13 +75,10 @@ class UserController extends Controller
 
     public function storeOrder(Request $request)
     {
-        $user = auth()->user();
 
-        if ($user->role == '0') {
             try {
                 $total_price = 0;
                 $items = $request->all();
-
 
                 foreach ($items['orders'] as $key => $value) {
                     $product = Product::find($value['product_id']);
@@ -95,7 +92,7 @@ class UserController extends Controller
 
                 // Create order
                 $order = Order::create([
-                    'user_id' => $user->id,
+                    'user_id' => $request->user_id,
                     'total_price' => $total_price,
                 ]);
 
@@ -117,18 +114,13 @@ class UserController extends Controller
                     'message' => "Order Created successfully",
                     'Order' => $order
                 ], 200);
-            } catch (\Exception $e) {
-                // Return Json Response
+            }catch (\Exception $e){
                 return response()->json([
-                    'message' => "Something went really wrong!"
+                    'status' => false,
+                    'message' => $e->getMessage()
                 ], 500);
             }
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
-        }
+
     }
 
 
@@ -155,11 +147,10 @@ class UserController extends Controller
 
     public function userUpdate(Request $request)
     {
-        $user = auth()->user();
 
             try {
                 // Find user
-                $user = User::find($user->id);
+                $user = User::find($request->user_id);
                 if (!$user) {
                     return response()->json([
                         'status' => false,
@@ -202,7 +193,7 @@ class UserController extends Controller
                     // Image name
                     $imageName = Str::random(32) . "." . $request->user_image->getClientOriginalExtension();
 
-                    $user->user_image = $imageName;
+                    $user->user_image = 'http://node.tojar-gaza.com/storage/app/public/users/' . $imageName;
 
                     // Image save in public folder
                     $storage->put('users/' . $imageName, file_get_contents($request->user_image));
@@ -226,20 +217,26 @@ class UserController extends Controller
 
     }
 
-    public function getOrder()
+    public function getOrder(Request $request)
     {
-        $user = auth()->user();
 
         try {
-            $orders = Order::with('items')->where('user_id',  $user->id)->get();
+            $user = User::find($request->user_id);
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User Not Found.'
+                ], 404);
+            }
+            $orders = Order::with('items')->where('user_id',  $request->user_id)->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
-                'message' => "Something went really wrong!"
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }
