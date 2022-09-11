@@ -59,9 +59,9 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
-    Route::post('/order', [UserController::class, 'storeOrder']);
     Route::post('/logout', [UserController::class, 'userLogout']);
 });
+Route::post('user/order', [UserController::class, 'storeOrder']);
 Route::post('user/userupdate', [UserController::class, 'userUpdate']);
 Route::post('user/getorder', [UserController::class, 'getOrder']);
 
@@ -69,6 +69,7 @@ Route::get('/categories', [UserController::class, 'categoriesIndex']); //
 Route::post('/category', [UserController::class, 'categoryShow']); //
 Route::get('/products', [UserController::class, 'productsIndex']); //
 Route::post('/product', [UserController::class, 'productShow']); //
+Route::get('/mostorders', [UserController::class, 'mostOrders']); //
 
 //admin
 Route::post('/auth/login', [AuthController::class, 'login']);

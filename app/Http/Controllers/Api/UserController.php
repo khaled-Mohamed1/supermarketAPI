@@ -73,6 +73,17 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function mostOrders()
+    {
+
+        $products = Product::where('order_qty', '>', '0')->take(5)->get();
+        return response()->json([
+            'status' => true,
+            'products' => $products
+        ], 200);
+    }
+
+
     public function storeOrder(Request $request)
     {
 
@@ -89,6 +100,14 @@ class UserController extends Controller
                         ], 500);
                     }
                 }
+
+                foreach ($items['orders'] as $key => $value) {
+                    $product = Product::find($value['product_id']);
+                    $product->order_qty = $value['product_quantity'] + $product->order_qty;
+                    $product->save();
+                }
+
+
 
                 // Create order
                 $order = Order::create([
