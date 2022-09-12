@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Offer;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -73,6 +74,16 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function offerIndex()
+    {
+
+        $offers = Offer::all();
+        return response()->json([
+            'status' => true,
+            'offers' => $offers
+        ], 200);
+    }
+
     public function mostOrders()
     {
 
@@ -92,19 +103,44 @@ class UserController extends Controller
                 $items = $request->all();
 
                 foreach ($items['orders'] as $key => $value) {
-                    $product = Product::find($value['product_id']);
-                    $total_price += $product->product_price * $value['product_quantity'];
-                    if ($product->product_quantity <  $value['product_quantity']) {
-                        return response()->json([
-                            'message' => $product->product_name . " quantity not enough"
-                        ], 500);
+                    if($value['product_status'] == true){
+                        $offer = Offer::find($value['product_id']);
+                        if (!$offer) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'offer Not Found.'
+                            ], 404);
+                        }
+                        $total_price += $offer->offer_price * $value['product_quantity'];
+                        if ($offer->offer_quantity <  $value['product_quantity']) {
+                            return response()->json([
+                                'message' => $offer->offer_name . " quantity not enough in offer"
+                            ], 500);
+                        }
+                    }else{
+                        $product = Product::find($value['product_id']);
+                        if (!$product) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'product Not Found.'
+                            ], 404);
+                        }
+                        $total_price += $product->product_price * $value['product_quantity'];
+                        if ($product->product_quantity <  $value['product_quantity']) {
+                            return response()->json([
+                                'message' => $product->product_name . " quantity not enough"
+                            ], 500);
+                        }
                     }
                 }
 
                 foreach ($items['orders'] as $key => $value) {
-                    $product = Product::find($value['product_id']);
-                    $product->order_qty = $value['product_quantity'] + $product->order_qty;
-                    $product->save();
+                    if(!$value['product_status'] == true){
+                        $product = Product::find($value['product_id']);
+                        $product->order_qty = $value['product_quantity'] + $product->order_qty;
+                        $product->save();
+                    }
+
                 }
 
 
@@ -118,13 +154,25 @@ class UserController extends Controller
                 $order_id = $order->id;
 
                 foreach ($items['orders'] as $key => $value) {
-                    $item = Item::create([
-                        'order_id' => $order_id,
-                        'product_id' => $value['product_id'],
-                        'product_quantity' => $value['product_quantity'],
-                        'price' => $product->product_price * $value['product_quantity'],
-                    ]);
-                    Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);;
+                    if($value['product_status'] == true){
+                        $item = Item::create([
+                            'order_id' => $order_id,
+                            'offer_id' => $value['product_id'],
+                            'product_quantity' => $value['product_quantity'],
+                            'price' => $offer->offer_price * $value['product_quantity'],
+                        ]);
+                        Offer::find($value['product_id'])->decrement('offer_quantity', $value['product_quantity']);;
+
+                    }else{
+                        $item = Item::create([
+                            'order_id' => $order_id,
+                            'product_id' => $value['product_id'],
+                            'product_quantity' => $value['product_quantity'],
+                            'price' => $product->product_price * $value['product_quantity'],
+                        ]);
+                        Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);;
+                    }
+
                 }
 
                 // Return Json Response
@@ -177,29 +225,36 @@ class UserController extends Controller
                     ], 404);
                 }
 
-                $validateUser = Validator::make(
-                    $request->all(),
-                    [
-                        'name' => 'required',
-                        'phone' => 'required|numeric|unique:users',
-                        'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                        'user_address' => 'required',
-                        'password' => 'required'
-                    ]
-                );
+                if($user->phone === $request->phone){
 
-                if ($validateUser->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'validation error',
-                        'errors' => $validateUser->errors()
-                    ], 401);
+                    $user->name = $request->name;
+                    $user->phone = $request->phone;
+                    $user->user_address = $request->user_address;
+                }else{
+                    $validateUser = Validator::make(
+                        $request->all(),
+                        [
+                            'name' => 'required',
+                            'phone' => 'required|numeric|unique:users',
+                            'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                            'user_address' => 'required',
+                        ]
+                    );
+
+                    if ($validateUser->fails()) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'validation error',
+                            'errors' => $validateUser->errors()
+                        ], 401);
+                    }
+
+                    $user->name = $request->name;
+                    $user->phone = $request->phone;
+                    $user->user_address = $request->user_address;
                 }
 
-                $user->name = $request->name;
-                $user->phone = $request->phone;
-                $user->user_address = $request->user_address;
-                $user->password = Hash::make($request->password);
+
 
                 if ($request->user_image) {
                     // Public storage
@@ -258,5 +313,6 @@ class UserController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+
     }
 }

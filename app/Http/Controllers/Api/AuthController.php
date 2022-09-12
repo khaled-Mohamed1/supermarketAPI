@@ -152,6 +152,13 @@ class AuthController extends Controller
                 ], 404);
             }
 
+            if($user->phone === $request->phone){
+
+                $user->name = $request->name;
+                $user->phone = $request->phone;
+                $user->user_address = $request->user_address;
+            }else{
+
             $validateUser = Validator::make(
                 $request->all(),
                 [
@@ -170,9 +177,14 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $user->name = $request->name;
-            $user->phone = $request->phone;
-            $user->user_address = $request->user_address;
+
+
+                $user->name = $request->name;
+                $user->phone = $request->phone;
+                $user->user_address = $request->user_address;
+            }
+
+
 
             if ($request->user_image) {
                 // Public storage
@@ -200,11 +212,10 @@ class AuthController extends Controller
                 'message' => "User successfully updated.",
                 'user' => $user
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => "Something went really wrong!"
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -256,12 +267,13 @@ class AuthController extends Controller
                 'debts' => $debts,
                 'product_qty' => $product_qty,
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
-                'message' => "Something went really wrong!"
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
+
     }
 
     public function usersDebts()
@@ -273,12 +285,13 @@ class AuthController extends Controller
                 'status' => true,
                 'users' => $users,
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
-                'message' => "Something went really wrong!"
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
+
     }
 
     public function updateUserDebt(Request $request)
@@ -295,11 +308,12 @@ class AuthController extends Controller
                 'message' => "UserDebt successfully updated.",
                 'users' => $user,
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
-                'message' => "Something went really wrong!"
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
+
     }
 }

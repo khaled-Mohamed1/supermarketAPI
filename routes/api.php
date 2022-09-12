@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,11 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::post('/productupdate', [ProductController::class, 'productUpdate']);
     Route::post('/productdelete', [ProductController::class, 'productDelete']);
+
+    Route::apiResource('offers', OfferController::class);
+    Route::post('/offerupdate', [OfferController::class, 'offerUpdate']);
+    Route::post('/offerdelete', [OfferController::class, 'offerDelete']);
+
 
     //logout
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -69,6 +75,7 @@ Route::get('/categories', [UserController::class, 'categoriesIndex']); //
 Route::post('/category', [UserController::class, 'categoryShow']); //
 Route::get('/products', [UserController::class, 'productsIndex']); //
 Route::post('/product', [UserController::class, 'productShow']); //
+Route::get('/offers', [UserController::class, 'offerIndex']); //
 Route::get('/mostorders', [UserController::class, 'mostOrders']); //
 
 //admin
