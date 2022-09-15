@@ -26,7 +26,7 @@ class AuthController extends Controller
                     [
                         'name' => 'required',
                         'phone' => 'required|numeric|unique:users',
-                        'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                        'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
                         'user_address' => 'required',
                         'password' => 'required'
                     ]
@@ -164,7 +164,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required|numeric|unique:users',
-                    'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
                     'user_address' => 'required'
                 ]
             );

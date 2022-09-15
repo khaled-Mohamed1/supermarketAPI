@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,14 +15,14 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         //test
 
         try {
-            $categories = Category::with('prodcuts')->get();
+            $categories = Category::with('products')->get();
             return response()->json([
                 'status' => true,
                 'categories' => $categories,
@@ -34,7 +35,7 @@ class CategoryController extends Controller
         }
     }
 
-    public function categoriesNames()
+    public function categoriesNames(): JsonResponse
     {
 
         try {
@@ -65,7 +66,7 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function store(StoreCategoryRequest $request)
     {
@@ -101,7 +102,7 @@ class CategoryController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function show($id)
     {
@@ -138,7 +139,7 @@ class CategoryController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function categoryupdate(StoreCategoryRequest $request)
     {
@@ -194,7 +195,7 @@ class CategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function categoryDelete(Request $request)
     {

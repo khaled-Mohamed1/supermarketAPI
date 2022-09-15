@@ -12,7 +12,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -56,7 +56,7 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function orderShow(Request $request)
     {
@@ -92,7 +92,7 @@ class OrderController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function orderUpdate(Request $request)
     {
@@ -131,7 +131,7 @@ class OrderController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function orderDelete(Request $request)
     {

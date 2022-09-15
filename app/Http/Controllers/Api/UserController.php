@@ -20,7 +20,7 @@ class UserController extends Controller
     public function categoriesIndex()
     {
 
-        $categories = Category::with('prodcuts')->get();
+        $categories = Category::with('products')->get();
         return response()->json([
             'status' => true,
             'categories' => $categories
@@ -30,7 +30,7 @@ class UserController extends Controller
     public function categoryShow(Request $request)
     {
         // category Detail
-        $category = Category::with('prodcuts')->find($request->category_id);
+        $category = Category::with('products')->find($request->category_id);
         if (!$category) {
             return response()->json([
                 'status' => false,

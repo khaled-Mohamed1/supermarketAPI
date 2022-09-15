@@ -27,7 +27,7 @@ class StoreProductRequest extends FormRequest
             return [
                 'category_id' => 'required',
                 'product_name' => 'required|string|max:258',
-                'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
                 'product_description' => 'required|string',
                 'product_quantity' => 'required|integer',
                 'product_price' => 'required|numeric'
@@ -36,7 +36,7 @@ class StoreProductRequest extends FormRequest
             return [
                 'category_id' => 'required',
                 'product_name' => 'required|string|max:258',
-                'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
                 'product_description' => 'required|string',
                 'product_quantity' => 'required|integer',
                 'product_price' => 'required|numeric'
@@ -48,21 +48,22 @@ class StoreProductRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'category_id.required' => 'category_id is required!',
-                'product_name.required' => 'product_name is required!',
-                'product_description.required' => 'product_description is required!',
-                'product_image.required' => 'product_image is required!',
-                'product_quantity.required' => 'product_quantity is required!',
-                'product_price.required' => 'product_price is required!',
+                'category_id.required' => 'يجب ادخال تصنيف!',
+                'product_name.required' => 'يجب ادخال اسم المنتج!',
+                'product_description.required' => 'يجب ادخال وصف المنتج!',
+                'product_image.required' => 'يجب ادخال صورة المنتج!',
+                'product_image.max' => 'مساحة الصورة يجب ان تكون اقل من 4 ميجا!',
+                'product_quantity.required' => 'يجب ادخال كمية المنتج!',
+                'product_price.required' => 'يجب ادخال سعر المنتج!',
 
             ];
         } else {
             return [
-                'category_id.required' => 'category_id is required!',
-                'product_name.required' => 'product_name is required!',
-                'product_description.required' => 'product_description is required!',
-                'product_quantity.required' => 'product_quantity is required!',
-                'product_price.required' => 'product_price is required!',
+                'category_id.required' => 'يجب ادخال تصنيف!',
+                'product_name.required' => 'يجب ادخال اسم المنتج!',
+                'product_description.required' => 'يجب ادخال وصف المنتج!',
+                'product_quantity.required' => 'يجب ادخال كمية المنتج!',
+                'product_price.required' => 'يجب ادخال سعر المنتج!',
             ];
         }
     }

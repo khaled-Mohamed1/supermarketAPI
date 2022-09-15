@@ -26,12 +26,12 @@ class StoreCategoryRequest extends FormRequest
         if (request()->isMethod('post')) {
             return [
                 'category_name' => 'required|string|max:258',
-                'category_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'category_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4069',
             ];
         } else {
             return [
                 'category_name' => 'required|string|max:258',
-                'category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
             ];
         }
     }
@@ -40,12 +40,13 @@ class StoreCategoryRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'category_name.required' => 'category_name is required!',
-                'category_image.required' => 'category_image is required!'
+                'category_name.required' => 'يجب ادخال اسم التصنيف',
+                'category_image.required' => 'يجب ادخال الصورة التصنيف',
+                'category_image.max' => '!!مساحة الصورة يجب ان تكون اقل من 4 ميجا',
             ];
         } else {
             return [
-                'category_name.required' => 'category_name is required!',
+                'category_name.required' => 'يجب ادخال اسم التصنيف',
             ];
         }
     }
