@@ -29,6 +29,14 @@ class AuthController extends Controller
                         'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
                         'user_address' => 'required',
                         'password' => 'required'
+                    ],
+                    [
+                        'name.required' => 'يجب ادخال اسم المستخدم!',
+                        'phone.required' => 'يجد ادخال رقم جوال السمتخدم!',
+                        'user_image.required' => 'يجد ادخال صورة المستخدم!',
+                        'user_image.max' => 'مساحة الصورة يجب ان تكون اقل من 8 ميغا!',
+                        'user_address.required' => 'يجد ادخال مكان سكن المستخدم!',
+                        'password.required' => 'يجب ادخال كلمة سر المستخدم'
                     ]
                 );
 
@@ -166,7 +174,14 @@ class AuthController extends Controller
                     'phone' => 'required|numeric|unique:users',
                     'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
                     'user_address' => 'required'
-                ]
+                ],
+                [
+                    'name.required' => 'يجب ادخال اسم المستخدم!',
+                    'phone.required' => 'يجد ادخال رقم جوال السمتخدم!',
+                    'user_image.required' => 'يجد ادخال صورة المستخدم!',
+                    'user_image.max' => 'مساحة الصورة يجب ان تكون اقل من 8 ميغا!',
+                    'user_address.required' => 'يجد ادخال مكان سكن المستخدم!',
+                    ]
             );
 
             if ($validateUser->fails()) {
