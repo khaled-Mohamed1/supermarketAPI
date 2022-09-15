@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\Offer;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -174,6 +175,8 @@ class UserController extends Controller
                     }
 
                 }
+
+                Cart::where('user_id', $request->user_id)->truncate();
 
                 // Return Json Response
                 return response()->json([

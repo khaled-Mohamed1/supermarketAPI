@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Offer;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
@@ -275,12 +276,14 @@ class AuthController extends Controller
             $sales = Order::sum('total_price');
             $debts = User::sum('user_debt_amount');
             $product_qty = Product::where('product_quantity', '0')->get();
+            $offer_qty = Offer::where('offer_quantity', '0')->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,
                 'sales' => $sales - $debts,
                 'debts' => $debts,
                 'product_qty' => $product_qty,
+                'offer_qty' => $offer_qty,
             ], 200);
         }catch (\Exception $e){
             return response()->json([

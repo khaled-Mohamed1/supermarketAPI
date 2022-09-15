@@ -17,16 +17,23 @@ class Product extends Model
         'product_quantity',
         'product_price',
         'order_qty',
+        'status',
+
     ];
 
 
-    public function CategoryProduct()
+    public function CategoryProduct(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
-    public function items()
+    public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function carts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Cart::class);
     }
 }

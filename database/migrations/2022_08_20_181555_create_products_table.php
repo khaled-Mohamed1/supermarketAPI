@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('product_quantity')->nullable();
             $table->float('product_price')->nullable();
             $table->integer('order_qty')->default('0');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
