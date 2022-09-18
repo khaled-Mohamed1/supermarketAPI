@@ -18,10 +18,12 @@ class CartController extends Controller
     public function cartList(Request $request): JsonResponse
     {
         $cartItems = Cart::where('user_id', $request->user_id)->with('ProductCart', 'OfferCart')->get();
+        $cartCount = $cartItems->count();
 
         return response()->json([
             'status' => true,
-            'CartItems' => $cartItems
+            'CartCount' => $cartCount,
+            'CartItems' => $cartItems,
         ], 200);
     }
 
@@ -38,15 +40,34 @@ class CartController extends Controller
 
             // Create cart
             if($request->offer_id){
-                $cart = Cart::create([
-                    'user_id' => $request->user_id,
-                    'offer_id' => $request->offer_id,
-                ]);
-            }else{
-                $cart = Cart::create([
-                    'user_id' => $request->user_id,
-                    'product_id' => $request->product_id,
-                ]);
+                $item = Cart::where('offer_id', '=', $request->offer_id)->first();
+                if ($item === null) {
+                    $cart = Cart::create([
+                        'user_id' => $request->user_id,
+                        'offer_id' => $request->offer_id,
+                    ]);
+
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'item is exist Found.',
+                    ], 404);
+                }
+
+            }elseif($request->product_id){
+                $item = Cart::where('product_id', '=', $request->product_id)->first();
+                if ($item === null) {
+                    $cart = Cart::create([
+                        'user_id' => $request->user_id,
+                        'product_id' => $request->product_id,
+                    ]);
+
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'item is exist Found.',
+                    ], 404);
+                }
             }
 
 
@@ -56,12 +77,14 @@ class CartController extends Controller
                 'message' => "cart Created successfully",
                 'cart' => $cart
             ], 200);
+
         } catch (\Exception $e) {
             // Return Json Response
             return response()->json([
                 'message' => "Something went really wrong!"
             ], 500);
-        }    }
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -74,20 +97,29 @@ class CartController extends Controller
     {
         try {
             $cart = Cart::find($request->cart_id);
-            if($cart->product_quantity > 1){
-                return response()->json([
-                    'status' => true,
-                    'message' => "لا يمكن اخفاض الكمية",
-                    'cart' => $cart
-                ], 200);
+            if($request->product_quantity == -1){
+                if($cart->product_quantity == 1){
+                    return response()->json([
+                        'status' => true,
+                        'message' => "لا يمكن اخفاض الكمية",
+                        'cart' => $cart
+                    ], 200);
+                }else{
+                    Cart::find($request->cart_id)->increment('product_quantity', $request->product_quantity);
+                    $cart = Cart::find($request->cart_id);
+                }
             }else{
-                $cart = Cart::find($request->cart_id)->increment('product_quantity', $request->product_quantity);;
+                Cart::find($request->cart_id)->increment('product_quantity', $request->product_quantity);
+                $cart = Cart::find($request->cart_id);
             }
+
 
             // Return Json Response
             return response()->json([
                 'status' => true,
                 'message' => "Cart successfully updated.",
+                'cart' => $cart
+
             ], 200);
         } catch (\Exception $e) {
             // Return Json Response
