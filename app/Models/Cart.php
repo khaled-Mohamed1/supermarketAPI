@@ -16,9 +16,9 @@ class Cart extends Model
         'product_quantity',
     ];
 
-    public function UserOrder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function UserCart(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Order::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function ProductCart(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Notification;
 use App\Models\Offer;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -318,4 +319,21 @@ class UserController extends Controller
         }
 
     }
+
+    public function showNotification(Request $request){
+        try {
+            $notification = Notification::where('user_id', $request->user_id)->latest()->get();
+
+            return response()->json([
+                'status' => true,
+                'Notification' => $notification,
+            ], 200);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

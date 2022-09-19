@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -172,6 +173,11 @@ class OrderController extends Controller
 
         // Update debt
         $user->save();
+
+        Notification::create([
+            'user_id' => $user->id,
+            'notice_description'=> 'الرجاء من حضرتكم السيد: '.$user->name.' تسديد الدين بمبلغ ' . $user->user_debt_amount,
+        ]);
         // Return Json Response
         return response()->json([
             'status' => true,

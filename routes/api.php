@@ -63,6 +63,7 @@ Route::prefix('admin')->group(function () {
 
     //debts
     Route::get('/usersdebts', [AuthController::class, 'usersDebts']);
+    Route::get('/send_notification', [AuthController::class, 'sendNotification']);
     Route::post('/update_userdebt', [AuthController::class, 'updateUserDebt']);
 });
 
@@ -73,6 +74,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 Route::post('user/order', [UserController::class, 'storeOrder']);
 Route::post('user/userupdate', [UserController::class, 'userUpdate']);
 Route::post('user/getorder', [UserController::class, 'getOrder']);
+Route::post('user/show_notification', [UserController::class, 'showNotification']);
 
 //user cart
 Route::post('user/cart', [CartController::class, 'cartList']);

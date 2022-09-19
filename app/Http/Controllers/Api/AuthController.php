@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\User;
 use App\Http\Controllers\Controller;
@@ -311,6 +312,28 @@ class AuthController extends Controller
             ], 500);
         }
 
+    }
+
+    public function sendNotification(){
+        try {
+            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->get();
+            foreach ($users as $key => $user){
+                Notification::create([
+                    'user_id'=>$user->id,
+                    'notice_description'=> 'الرجاء من حضرتكم السيد: '.$user->name.' تسديد الدين بمبلغ ' . $user->user_debt_amount,
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'تم ارسال اشعارات للزبائن',
+            ], 200);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function updateUserDebt(Request $request)
