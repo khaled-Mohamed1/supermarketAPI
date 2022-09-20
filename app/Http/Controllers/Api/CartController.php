@@ -17,12 +17,20 @@ class CartController extends Controller
      */
     public function cartList(Request $request): JsonResponse
     {
+        $total = 0;
         $cartItems = Cart::where('user_id', $request->user_id)->with('ProductCart', 'OfferCart')->get();
         $cartCount = $cartItems->count();
+        foreach ($cartItems as $cartItem){
+            if($cartItem->ProductCart == null){
+                $total = $total + $cartItem->OfferCart->offer_price * $cartItem->product_quantity;
+            }elseif($cartItem->OfferCart == null){
+                $total = $total + $cartItem->ProductCart->product_price * $cartItem->product_quantity;
+            }
+        }
 
         return response()->json([
             'status' => true,
-            'CartCount' => $cartCount,
+            'TotalPrice' => $total,
             'CartItems' => $cartItems,
         ], 200);
     }

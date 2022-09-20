@@ -20,7 +20,7 @@ class OrderController extends Controller
 
 
         try {
-            $orders = Order::with('items')->where('status', '=', 'انتظار')->get();
+            $orders = Order::with('items.OfferItem','items.ProductItem','UserOrder')->where('status', '=', 'انتظار')->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,
