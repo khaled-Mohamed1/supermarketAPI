@@ -53,8 +53,14 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
-    protected $casts = [
-        'created_at' => "datetime:Y-m-d H:m",
-        'updated_at' => "datetime:Y-m-d H:m",
-    ];
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->timezone('Africa/Nairobi')->format('Y-m-d H:i');
+    }
+
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->timezone('Africa/Nairobi')->format('Y-m-d H:i');
+    }
 }
