@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -51,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    protected $casts = [
+        'created_at' => "datetime:Y-m-d H:m",
+        'updated_at' => "datetime:Y-m-d H:m",
+    ];
 }

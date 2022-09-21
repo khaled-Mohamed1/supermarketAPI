@@ -19,4 +19,9 @@ class Notification extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    protected $casts = [
+        'created_at' => "datetime:Y-m-d H:m",
+        'updated_at' => "datetime:Y-m-d H:m",
+    ];
+
 }

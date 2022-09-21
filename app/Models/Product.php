@@ -36,4 +36,10 @@ class Product extends Model
     {
         return $this->hasMany(Cart::class);
     }
+
+    protected $casts = [
+        'created_at' => "datetime:Y-m-d H:m",
+        'updated_at' => "datetime:Y-m-d H:m",
+    ];
+
 }

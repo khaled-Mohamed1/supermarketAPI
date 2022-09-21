@@ -31,4 +31,9 @@ class Cart extends Model
         return $this->belongsTo(Offer::class, 'offer_id', 'id');
     }
 
+    protected $casts = [
+        'created_at' => "datetime:Y-m-d H:m",
+        'updated_at' => "datetime:Y-m-d H:m",
+    ];
+
 }
