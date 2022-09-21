@@ -55,6 +55,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::post('/ordershow', [OrderController::class, 'orderShow']);
     Route::post('/orderupdate', [OrderController::class, 'orderUpdate']);
+    Route::post('/orderupdatestatus', [OrderController::class, 'orderUpdateStatus']);
     Route::post('/orderdelete', [OrderController::class, 'orderDelete']);
     Route::post('/putdebt', [OrderController::class, 'putDebt']);
 

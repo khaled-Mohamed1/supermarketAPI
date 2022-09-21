@@ -20,15 +20,16 @@ class OrderController extends Controller
 
 
         try {
-            $orders = Order::with('items.OfferItem','items.ProductItem','UserOrder')->where('status', '=', 'انتظار')->get();
+            $orders = Order::with('items.OfferItem','items.ProductItem','UserOrder')
+                ->orWhere('status', '=', 'انتظار')->orWhere('status', '=','تم القبول')->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
-                'message' => "Something went really wrong!"
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -119,11 +120,42 @@ class OrderController extends Controller
                 'message' => "Order successfully updated.",
                 'order' => $order
             ], 200);
-        } catch (\Exception $e) {
-            // Return Json Response
+        }catch (\Exception $e){
             return response()->json([
                 'status' => false,
-                'message' => "Something went really wrong!"
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function orderUpdateStatus(Request $request)
+    {
+
+        try {
+            // Find order
+            $order = Order::find($request->order_id);
+            if (!$order) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order Not Found.'
+                ], 404);
+            }
+
+            $order->status = $request->status;
+
+
+            $order->save();
+
+            // Return Json Response
+            return response()->json([
+                'status' => true,
+                'message' => "Order successfully updated.",
+                'order' => $order
+            ], 200);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }
