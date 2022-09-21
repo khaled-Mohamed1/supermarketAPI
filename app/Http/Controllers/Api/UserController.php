@@ -163,8 +163,11 @@ class UserController extends Controller
                             'product_quantity' => $value['product_quantity'],
                             'price' => $offer->offer_price * $value['product_quantity'],
                         ]);
-                        Offer::find($value['product_id'])->decrement('offer_quantity', $value['product_quantity']);;
-
+                        Offer::find($value['product_id'])->decrement('offer_quantity', $value['product_quantity']);
+                        $offer = Offer::find($value['product_id']);
+                        if($offer->offer_quantity == 0){
+                            $offer->delete();
+                        }
                     }else{
                         $item = Item::create([
                             'order_id' => $order_id,
@@ -172,7 +175,7 @@ class UserController extends Controller
                             'product_quantity' => $value['product_quantity'],
                             'price' => $product->product_price * $value['product_quantity'],
                         ]);
-                        Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);;
+                        Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);
                     }
 
                 }
