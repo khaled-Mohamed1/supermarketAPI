@@ -168,6 +168,7 @@ class UserController extends Controller
                         if($offer->offer_quantity == 0){
                             $offer->delete();
                         }
+                        //test
                     }else{
                         $item = Item::create([
                             'order_id' => $order_id,
