@@ -103,32 +103,33 @@ class UserController extends Controller
             try {
                 $total_price = 0;
                 $items = $request->all();
+                $object = json_decode($request->orders);
 
-                foreach ($items['orders'] as $key => $value) {
-                    if($value['product_status'] == true){
-                        $offer = Offer::find($value['product_id']);
+                foreach ($object as $key => $value) {
+                    if($value->product_status == true){
+                        $offer = Offer::find($value->product_id);
                         if (!$offer) {
                             return response()->json([
                                 'status' => false,
                                 'message' => 'offer Not Found.'
                             ], 404);
                         }
-                        $total_price += $offer->offer_price * $value['product_quantity'];
-                        if ($offer->offer_quantity <  $value['product_quantity']) {
+                        $total_price += $offer->offer_price * $value->product_quantity;
+                        if ($offer->offer_quantity <  $value->product_quantity) {
                             return response()->json([
                                 'message' => $offer->offer_name . " quantity not enough in offer"
                             ], 500);
                         }
                     }else{
-                        $product = Product::find($value['product_id']);
+                        $product = Product::find($value->product_id);
                         if (!$product) {
                             return response()->json([
                                 'status' => false,
                                 'message' => 'product Not Found.'
                             ], 404);
                         }
-                        $total_price += $product->product_price * $value['product_quantity'];
-                        if ($product->product_quantity <  $value['product_quantity']) {
+                        $total_price += $product->product_price * $value->product_quantity;
+                        if ($product->product_quantity <  $value->product_quantity) {
                             return response()->json([
                                 'message' => $product->product_name . " quantity not enough"
                             ], 500);
@@ -136,10 +137,10 @@ class UserController extends Controller
                     }
                 }
 
-                foreach ($items['orders'] as $key => $value) {
-                    if(!$value['product_status'] == true){
-                        $product = Product::find($value['product_id']);
-                        $product->order_qty = $value['product_quantity'] + $product->order_qty;
+                foreach ($object as $key => $value) {
+                    if(!$value->product_status == true){
+                        $product = Product::find($value->product_id);
+                        $product->order_qty = $value->product_quantity + $product->order_qty;
                         $product->save();
                     }
 
@@ -155,16 +156,16 @@ class UserController extends Controller
 
                 $order_id = $order->id;
 
-                foreach ($items['orders'] as $key => $value) {
-                    if($value['product_status'] == true){
+                foreach ($object as $key => $value) {
+                    if($value->product_status == true){
                         $item = Item::create([
                             'order_id' => $order_id,
-                            'offer_id' => $value['product_id'],
-                            'product_quantity' => $value['product_quantity'],
-                            'price' => $offer->offer_price * $value['product_quantity'],
+                            'offer_id' => $value->product_id,
+                            'product_quantity' => $value->product_quantity,
+                            'price' => $offer->offer_price * $value->product_quantity,
                         ]);
-                        Offer::find($value['product_id'])->decrement('offer_quantity', $value['product_quantity']);
-                        $offer = Offer::find($value['product_id']);
+                        Offer::find($value->product_id)->decrement('offer_quantity', $value->product_quantity);
+                        $offer = Offer::find($value->product_id);
                         if($offer->offer_quantity == 0){
                             $offer->delete();
                         }
@@ -172,11 +173,11 @@ class UserController extends Controller
                     }else{
                         $item = Item::create([
                             'order_id' => $order_id,
-                            'product_id' => $value['product_id'],
-                            'product_quantity' => $value['product_quantity'],
-                            'price' => $product->product_price * $value['product_quantity'],
+                            'product_id' => $value->product_id,
+                            'product_quantity' => $value->product_quantity,
+                            'price' => $product->product_price * $value->product_quantity,
                         ]);
-                        Product::find($value['product_id'])->decrement('product_quantity', $value['product_quantity']);
+                        Product::find($value->product_id)->decrement('product_quantity', $value->product_quantity);
                     }
 
                 }
