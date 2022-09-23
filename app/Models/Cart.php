@@ -34,13 +34,13 @@ class Cart extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($value)->timezone('Africa/Nairobi')->format('Y-m-d H:i');
+        return Carbon::parse($value)->timezone('Asia/Gaza')->format('Y-m-d H:i');
     }
 
 
     public function getUpdatedAtAttribute($value)
     {
-        return Carbon::parse($value)->timezone('Africa/Nairobi')->format('Y-m-d H:i');
+        return Carbon::parse($value)->timezone('Asia/Gaza')->format('Y-m-d H:i');
     }
 
 }

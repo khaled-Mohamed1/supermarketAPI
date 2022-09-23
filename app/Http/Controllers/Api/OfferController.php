@@ -19,7 +19,7 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $offers = Offer::all();
+        $offers = Offer::latest()->get();
         return response()->json([
             'status' => true,
             'offers' => $offers

@@ -21,7 +21,9 @@ class OrderController extends Controller
 
         try {
             $orders = Order::with('items.OfferItem','items.ProductItem','UserOrder')
-                ->orWhere('status', '=', 'انتظار')->orWhere('status', '=','تم القبول')->get();
+                ->orWhere('status', '=', 'انتظار')
+                ->orWhere('status', '=','تم القبول')
+                ->latest()->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,

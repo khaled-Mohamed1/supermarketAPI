@@ -22,7 +22,7 @@ class CategoryController extends Controller
         //test
 
         try {
-            $categories = Category::with('products')->get();
+            $categories = Category::with('products')->latest()->get();
             return response()->json([
                 'status' => true,
                 'categories' => $categories,

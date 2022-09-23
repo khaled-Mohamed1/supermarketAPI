@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -138,7 +139,7 @@ class AuthController extends Controller
     {
 
         try {
-            $users = User::where('role', '=', '0')->get();
+            $users = User::where('role', '=', '0')->latest()->get();
             return response()->json([
                 'status' => true,
                 'users' => $users,
@@ -274,10 +275,10 @@ class AuthController extends Controller
     public function statistics()
     {
         try {
-            $orders = Order::count();
-            $sales = Order::sum('total_price');
-            $debts = User::sum('user_debt_amount');
-            $product_qty = Product::where('product_quantity', '0')->get();
+            $orders = Order::whereDate('created_at', Carbon::today())->count();
+            $sales = Order::whereDate('created_at', Carbon::today())->sum('total_price');
+            $debts = User::whereDate('created_at', Carbon::today())->sum('user_debt_amount');
+            $product_qty = Product::where('product_quantity', '0')->latest()->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,
@@ -298,7 +299,7 @@ class AuthController extends Controller
     {
 
         try {
-            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->get();
+            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->latest()->get();
             return response()->json([
                 'status' => true,
                 'users' => $users,
@@ -314,7 +315,7 @@ class AuthController extends Controller
 
     public function sendNotification(){
         try {
-            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->get();
+            $users = User::where('role', '0')->where('user_debt_amount', '>', '0')->latest()->get();
             foreach ($users as $key => $user){
                 Notification::create([
                     'user_id'=>$user->id,
@@ -340,7 +341,7 @@ class AuthController extends Controller
         try {
             $user = User::find($request->user_id);
 
-            $user->user_debt_amount = $request->debt;
+            $user->user_debt_amount = $user->user_debt_amount - $request->debt;
             $user->save();
 
             return response()->json([

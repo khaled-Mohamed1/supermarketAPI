@@ -18,7 +18,7 @@ class CartController extends Controller
     public function cartList(Request $request): JsonResponse
     {
         $total = 0;
-        $cartItems = Cart::where('user_id', $request->user_id)->with('ProductCart', 'OfferCart')->get();
+        $cartItems = Cart::where('user_id', $request->user_id)->with('ProductCart', 'OfferCart')->latest()->get();
         $cartCount = $cartItems->count();
         foreach ($cartItems as $cartItem){
             if($cartItem->ProductCart == null){

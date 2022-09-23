@@ -22,7 +22,7 @@ class UserController extends Controller
     public function categoriesIndex()
     {
 
-        $categories = Category::with('products')->get();
+        $categories = Category::with('products')->latest()->get();
         return response()->json([
             'status' => true,
             'categories' => $categories
@@ -50,7 +50,7 @@ class UserController extends Controller
     public function productsIndex()
     {
 
-        $products = Product::all();
+        $products = Product::latest()->get();
         return response()->json([
             'status' => true,
             'products' => $products
@@ -79,7 +79,7 @@ class UserController extends Controller
     public function offerIndex()
     {
 
-        $offers = Offer::all();
+        $offers = Offer::latest()->get();
         return response()->json([
             'status' => true,
             'offers' => $offers
@@ -89,7 +89,7 @@ class UserController extends Controller
     public function mostOrders()
     {
 
-        $products = Product::where('order_qty', '>', '0')->take(5)->get();
+        $products = Product::where('order_qty', '>', '0')->take(5)->latest()->get();
         return response()->json([
             'status' => true,
             'products' => $products
@@ -152,6 +152,7 @@ class UserController extends Controller
                 $order = Order::create([
                     'user_id' => $request->user_id,
                     'total_price' => $total_price,
+                    'delivery_method' => $request->delivery_method,
                 ]);
 
                 $order_id = $order->id;
@@ -311,7 +312,7 @@ class UserController extends Controller
                     'message' => 'User Not Found.'
                 ], 404);
             }
-            $orders = Order::with('items')->where('user_id',  $request->user_id)->get();
+            $orders = Order::with('items')->where('user_id',  $request->user_id)->latest()->get();
             return response()->json([
                 'status' => true,
                 'orders' => $orders,

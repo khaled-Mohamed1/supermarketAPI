@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('status')->default('انتظار');
             $table->float('total_price')->nullable();
+            $table->string('delivery_method')->nullable();
             $table->timestamps();
         });
     }

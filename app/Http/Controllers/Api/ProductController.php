@@ -19,7 +19,7 @@ class ProductController extends Controller
     public function index()
     {
 
-        $products = Product::all();
+        $products = Product::latest()->get();
         return response()->json([
             'status' => true,
             'products' => $products
