@@ -301,6 +301,21 @@ class UserController extends Controller
 
     }
 
+    public function deptUser(Request $request){
+        try {
+            $user = User::findOrFail($request->user_id);
+            return response()->json([
+                'status' => true,
+                'dept' => $user->user_debt_amount,
+            ], 200);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getOrder(Request $request)
     {
 

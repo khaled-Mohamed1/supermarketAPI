@@ -76,6 +76,7 @@ Route::post('user/order', [UserController::class, 'storeOrder']);
 Route::post('user/userupdate', [UserController::class, 'userUpdate']);
 Route::post('user/getorder', [UserController::class, 'getOrder']);
 Route::post('user/show_notification', [UserController::class, 'showNotification']);
+Route::post('user/userdept', [UserController::class, 'deptUser']);
 
 //user cart
 Route::post('user/cart', [CartController::class, 'cartList']);
