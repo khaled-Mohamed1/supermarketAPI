@@ -60,7 +60,7 @@ class OfferController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "Offer Created successfully",
+                'message' => "تم انشاء منتج العرض",
                 'offer' => $offer
             ], 200);
         } catch (\Exception $e) {
@@ -107,7 +107,7 @@ class OfferController extends Controller
             if (!$offer) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Offer Not Found.'
+                    'message' => 'المنتج غير موجود'
                 ], 404);
             }
 
@@ -138,7 +138,7 @@ class OfferController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "offer successfully updated.",
+                'message' => "تم تحديث منتج العرض",
                 'offer' => $offer
             ], 200);
         } catch (\Exception $e) {
@@ -163,7 +163,7 @@ class OfferController extends Controller
         if (!$offer) {
             return response()->json([
                 'status' => false,
-                'message' => 'offer Not Found.'
+                'message' => 'المنتج غير موجود'
             ], 404);
         }
 
@@ -180,6 +180,6 @@ class OfferController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "offer successfully deleted."
+            'message' => "تم حذف منتج العرض"
         ], 200);    }
 }

@@ -69,7 +69,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'Order Not Found.'
+                'message' => 'الطلبية غير موجودة'
             ], 404);
         }
 
@@ -107,7 +107,7 @@ class OrderController extends Controller
             if (!$order) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Order Not Found.'
+                    'message' => 'الطلبية غير موجودة'
                 ], 404);
             }
 
@@ -119,7 +119,7 @@ class OrderController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "Order successfully updated.",
+                'message' => "تم تحديث الطلبية",
                 'order' => $order
             ], 200);
         }catch (\Exception $e){
@@ -139,7 +139,7 @@ class OrderController extends Controller
             if (!$order) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Order Not Found.'
+                    'message' => 'الطلبية غير موجودة'
                 ], 404);
             }
 
@@ -151,7 +151,7 @@ class OrderController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "Order successfully updated.",
+                'message' => "تم تحديث الطلبية",
                 'order' => $order
             ], 200);
         }catch (\Exception $e){
@@ -176,7 +176,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'order Not Found.'
+                'message' => 'الطلبية غير موجودة'
             ], 404);
         }
 
@@ -186,7 +186,7 @@ class OrderController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "Order successfully deleted."
+            'message' => "تم حذف الطلبية"
         ], 200);
     }
 
@@ -197,7 +197,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status' => false,
-                'message' => 'Order Not Found.'
+                'message' => 'الطلبية غير موجودة'
             ], 404);
         }
 
@@ -215,7 +215,7 @@ class OrderController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "Debt send to user.",
+            'message' => "تم ارسال الدين الي حساب المستخدم",
             'order' => $order->total_price,
         ], 200);
     }

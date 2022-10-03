@@ -69,7 +69,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Created Successfully',
+                'message' => 'تم انشاء حساب جديد',
             ], 200);
         } catch (\Throwable $e) {
             return response()->json([
@@ -102,7 +102,7 @@ class AuthController extends Controller
             if (!Auth::attempt($request->only(['phone', 'password']))) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Phone & Password does not match with our record.',
+                    'message' => 'كلمة السر او رقم الجوال غير صحيحة.',
                 ], 401);
             }
 
@@ -111,7 +111,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
+                'message' => 'تم تسجيل الدخول',
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
                 'user' => $user
             ], 200);
@@ -131,7 +131,7 @@ class AuthController extends Controller
         auth()->user()->tokens()->delete();
         return [
             'status' => true,
-            'message' => 'Logged out'
+            'message' => 'تم تسجيل الخروج'
         ];
     }
 
@@ -160,7 +160,7 @@ class AuthController extends Controller
             if (!$user) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'User Not Found.'
+                    'message' => 'لا يوجد مستخدم بهذا الإسم'
                 ], 404);
             }
 
@@ -228,7 +228,7 @@ class AuthController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "User successfully updated.",
+                'message' => "تم تعديل هذا المستخدم",
                 'user' => $user
             ], 200);
         }catch (\Exception $e){
@@ -246,12 +246,12 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'user Not Found.'
+                'message' => 'لا يوجد مستخدم بهذا الإسم'
             ], 404);
         } elseif ($user->role == '1') {
             return response()->json([
                 'status' => false,
-                'message' => 'can not delete admin.'
+                'message' => 'لا يمكن حذف المدير'
             ], 404);
         }
 
@@ -268,7 +268,7 @@ class AuthController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "Users successfully deleted."
+            'message' => "تم حذف المستخدم بنجاح"
         ], 200);
     }
 
@@ -347,7 +347,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => "UserDebt successfully updated.",
+                'message' => "تم تحديث دين المستخدم",
                 'users' => $user,
             ], 200);
         }catch (\Exception $e){

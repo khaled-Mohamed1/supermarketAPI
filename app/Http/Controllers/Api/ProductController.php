@@ -64,7 +64,7 @@ class ProductController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "Product Created successfully",
+                'message' => "تم انشاء المنتج",
                 'product' => $product
             ], 200);
         } catch (\Exception $e) {
@@ -89,7 +89,7 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => false,
-                'message' => 'product Not Found.'
+                'message' => 'المنتج غير موجود'
             ], 404);
         }
 
@@ -127,7 +127,7 @@ class ProductController extends Controller
             if (!$product) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'product Not Found.'
+                    'message' => 'المنتج غير موجود'
                 ], 404);
             }
 
@@ -160,7 +160,7 @@ class ProductController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "product successfully updated.",
+                'message' => "تم تحديث المنتج",
                 'product' => $product
             ], 200);
         } catch (\Exception $e) {
@@ -186,7 +186,7 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => false,
-                'message' => 'product Not Found.'
+                'message' => 'المنتج غير موجود'
             ], 404);
         }
 
@@ -203,7 +203,7 @@ class ProductController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "product successfully deleted."
+            'message' => "تم حذف المنتج"
         ], 200);
     }
 }

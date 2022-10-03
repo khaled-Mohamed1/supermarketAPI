@@ -58,7 +58,7 @@ class CartController extends Controller
                 }else{
                     return response()->json([
                         'status' => false,
-                        'message' => 'item is exist Found.',
+                        'message' => 'المنتج غير موجود',
                     ], 404);
                 }
 
@@ -73,7 +73,7 @@ class CartController extends Controller
                 }else{
                     return response()->json([
                         'status' => false,
-                        'message' => 'item is exist Found.',
+                        'message' => 'المنتج غير موجود',
                     ], 404);
                 }
             }
@@ -82,7 +82,7 @@ class CartController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "cart Created successfully",
+                'message' => "تم اضافة المنتج للسلة",
                 'cart' => $cart
             ], 200);
 
@@ -125,7 +125,7 @@ class CartController extends Controller
             // Return Json Response
             return response()->json([
                 'status' => true,
-                'message' => "Cart successfully updated.",
+                'message' => "تم تحديث المنتج",
                 'cart' => $cart
 
             ], 200);
@@ -150,7 +150,7 @@ class CartController extends Controller
         if (!$cart) {
             return response()->json([
                 'status' => false,
-                'message' => 'item Not Found.'
+                'message' => 'المنتج غير موجود'
             ], 404);
         }
 
@@ -160,7 +160,7 @@ class CartController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "Cart successfully deleted."
+            'message' => "تم حذف المنتج من السلة"
         ], 200);
     }
 
@@ -172,6 +172,6 @@ class CartController extends Controller
         // Return Json Response
         return response()->json([
             'status' => true,
-            'message' => "Cart successfully Cleared."
+            'message' => "تم تصفية السلة"
         ], 200);    }
 }

@@ -36,7 +36,7 @@ class UserController extends Controller
         if (!$category) {
             return response()->json([
                 'status' => false,
-                'message' => 'Category Not Found.'
+                'message' => 'التصنيف غير موجود'
             ], 404);
         }
 
@@ -65,7 +65,7 @@ class UserController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => false,
-                'message' => 'product Not Found.'
+                'message' => 'المنتج غير موجود'
             ], 404);
         }
 
@@ -111,13 +111,13 @@ class UserController extends Controller
                         if (!$offer) {
                             return response()->json([
                                 'status' => false,
-                                'message' => 'offer Not Found.'
+                                'message' => 'منتج العرض غير موجود'
                             ], 404);
                         }
                         $total_price += $offer->offer_price * $value->product_quantity;
                         if ($offer->offer_quantity <  $value->product_quantity) {
                             return response()->json([
-                                'message' => $offer->offer_name . " quantity not enough in offer"
+                                'message' => $offer->offer_name . " الكمية غير كافية لمنتج العرض"
                             ], 500);
                         }
                     }else{
@@ -125,13 +125,13 @@ class UserController extends Controller
                         if (!$product) {
                             return response()->json([
                                 'status' => false,
-                                'message' => 'product Not Found.'
+                                'message' => 'المنتج غير موجود'
                             ], 404);
                         }
                         $total_price += $product->product_price * $value->product_quantity;
                         if ($product->product_quantity <  $value->product_quantity) {
                             return response()->json([
-                                'message' => $product->product_name . " quantity not enough"
+                                'message' => $product->product_name . " الكمية غير كافية"
                             ], 500);
                         }
                     }
@@ -188,7 +188,7 @@ class UserController extends Controller
                 // Return Json Response
                 return response()->json([
                     'status' => true,
-                    'message' => "Order Created successfully",
+                    'message' => "تم انشاء الطلبية",
                     'Order' => $order
                 ], 200);
             }catch (\Exception $e){
@@ -210,7 +210,7 @@ class UserController extends Controller
             $request->user()->tokens()->delete();
             return [
                 'status' => true,
-                'message' => 'User Logged out'
+                'message' => 'تم تسجيل الخروج'
             ];
         }catch (\Exception $e){
             return response()->json([
@@ -231,7 +231,7 @@ class UserController extends Controller
                 if (!$user) {
                     return response()->json([
                         'status' => false,
-                        'message' => 'User Not Found.'
+                        'message' => 'لم يتم العثور على المستخدم'
                     ], 404);
                 }
 
@@ -289,7 +289,7 @@ class UserController extends Controller
                 // Return Json Response
                 return response()->json([
                     'status' => true,
-                    'message' => "User successfully updated.",
+                    'message' => "تم تحديث بيانات المستخدم",
                     'user' => $user
                 ], 200);
             }catch (\Exception $e){
@@ -324,7 +324,7 @@ class UserController extends Controller
             if (!$user) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'User Not Found.'
+                    'message' => 'لم يتم العثور على المستخدم'
                 ], 404);
             }
             $orders = Order::with('items')->where('user_id',  $request->user_id)->latest()->get();
