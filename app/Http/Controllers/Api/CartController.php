@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
+use App\Models\Offer;
+use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -117,6 +119,28 @@ class CartController extends Controller
                     $cart = Cart::find($request->cart_id);
                 }
             }else{
+                $product_id = $cart->product_id;
+                $offer_id = $cart->offer_id;
+                if($product_id == null && $offer_id){
+                    $offer = Offer::find($offer_id);
+                    if($cart->product_quantity >= $offer->offer_quantity){
+                        return response()->json([
+                            'status' => true,
+                            'message' => "لا يمكن تجاوز الكمية الأصلية",
+                            'cart' => $cart
+                        ], 200);
+                    }
+                }else{
+                    $product = Product::find($product_id);
+                    if($cart->product_quantity >= $product->product_quantity){
+                        return response()->json([
+                            'status' => true,
+                            'message' => "لا يمكن تجاوز الكمية الأصلية",
+                            'cart' => $cart
+                        ], 200);
+                    }
+                }
+
                 Cart::find($request->cart_id)->increment('product_quantity', $request->product_quantity);
                 $cart = Cart::find($request->cart_id);
             }
@@ -126,7 +150,7 @@ class CartController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => "تم تحديث المنتج",
-                'cart' => $cart
+                'cart' => $cart,
 
             ], 200);
         } catch (\Exception $e) {
