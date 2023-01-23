@@ -42,6 +42,8 @@ Route::prefix('admin')->group(function () {
     Route::post('/offerupdate', [OfferController::class, 'offerUpdate']);
     Route::post('/offerdelete', [OfferController::class, 'offerDelete']);
 
+    Route::post('/upload-products', [ProductController::class, 'uploadProducts']);
+
 
     //logout
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -72,6 +74,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'userLogout']);
 });
+
 Route::post('user/order', [UserController::class, 'storeOrder']);
 Route::post('user/userupdate', [UserController::class, 'userUpdate']);
 Route::post('user/getorder', [UserController::class, 'getOrder']);
@@ -96,4 +99,5 @@ Route::get('/mostorders', [UserController::class, 'mostOrders']); //
 //admin
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'create']);
+
 //1|bTVkBDBfGUw6VFpn81YROYlV0Iyjs23HlN4bCUM3

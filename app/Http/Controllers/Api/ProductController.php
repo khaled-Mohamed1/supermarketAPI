@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Imports\CustomerImport;
+use App\Imports\ProductImport;
 use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -206,4 +210,23 @@ class ProductController extends Controller
             'message' => "تم حذف المنتج"
         ], 200);
     }
+
+    public function uploadProducts(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate([
+                'file'    => 'required',
+            ]
+            ,[
+                'file.required' => 'يجب ادخال ملف اكسل',
+            ]);
+
+        Excel::import(new ProductImport(), $request->file('file'));
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'message' => "تم استيراد بيانات المنتجات"
+        ], 200);
+    }
+
 }
