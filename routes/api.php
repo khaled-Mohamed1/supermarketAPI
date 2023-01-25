@@ -44,6 +44,9 @@ Route::prefix('admin')->group(function () {
 
     Route::post('/upload-products', [ProductController::class, 'uploadProducts']);
 
+    //search
+    Route::post('/search-products', [ProductController::class, 'searchProducts']);
+
 
     //logout
     Route::post('/logout', [AuthController::class, 'logout']);

@@ -229,4 +229,23 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function searchProducts(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate([
+                'search'    => 'required',
+            ]
+            ,[
+                'search.required' => 'يجب ادخال اسم المنتج للبحث',
+            ]);
+
+        $products = Product::where('product_name', 'LIKE', '%' . $request->search . '%')->get();
+
+        // Return Json Response
+        return response()->json([
+            'status' => true,
+            'product' => $products
+        ], 200);
+    }
+
+
 }
